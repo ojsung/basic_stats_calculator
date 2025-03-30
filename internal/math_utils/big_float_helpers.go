@@ -15,7 +15,7 @@ func NaturalPow(exponent *big.Float) *big.Float {
 }
 
 func ln(argument *big.Float) *big.Float {
-new(big.Float).	
+
 }
 
 
