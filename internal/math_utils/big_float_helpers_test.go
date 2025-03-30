@@ -52,7 +52,9 @@ func TestPow(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Pow(tt.args.base, tt.args.exponent); !reflect.DeepEqual(got, tt.want) {
+			if got, err := Pow(tt.args.base, tt.args.exponent); err != nil {
+				t.Errorf("Pow() error = %v", err)
+			} else if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Pow() = %v, want %v", got, tt.want)
 			}
 		})
@@ -72,27 +74,28 @@ func TestNaturalPow(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NaturalPow(tt.args.exponent); !reflect.DeepEqual(got, tt.want) {
+			if got, err := NaturalPow(tt.args.exponent); err != nil {
+				t.Errorf("NaturalPow() error = %v", err)
+			} else if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NaturalPow() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_ln(t *testing.T) {
-	type args struct {
-		argument *big.Float
-	}
+func Test_Ln(t *testing.T) {
 	tests := []struct {
 		name string
-		args args
+		argument *big.Float
 		want *big.Float
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ln(tt.args.argument); !reflect.DeepEqual(got, tt.want) {
+			if got, err := Ln(tt.argument); err != nil {
+				t.Errorf("Ln() error = %v", err)
+			} else if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ln() = %v, want %v", got, tt.want)
 			}
 		})

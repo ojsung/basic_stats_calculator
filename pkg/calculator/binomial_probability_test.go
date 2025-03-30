@@ -21,7 +21,7 @@ func Test_calculateBinomialProbability(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			calculateBinomialProbability(tt.args.chanceOfSuccess, args.trials, args.successes)
+			calculateBinomialProbability(tt.args.chanceOfSuccess, tt.args.trials, tt.args.successes)
 		})
 	}
 }
