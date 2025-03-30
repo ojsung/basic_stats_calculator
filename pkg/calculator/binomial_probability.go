@@ -3,10 +3,9 @@ package calculator
 import (
 	"errors"
 	"math/big"
-	mu "github.com/ojsung/basic_stats_calculator/internal/math_utils"
 )
 
-func calculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
+func CalculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
 	if trials < successes {
 		return big.Float{}, errors.New("binomial probability trials (n) cannot be less than successes (k)")
 	}
@@ -18,7 +17,7 @@ func calculateProbabilityOfKSuccesses(chanceOfSuccess *big.Float, trials int64, 
 		return big.Float{}, errors.New("probability of k successes trials (n) cannot be less than successes(k)")
 	}
 	if successes == 0 {
-		exponent := new(big.Float).SetInt64(trials)
+
 	}
 	return
 }

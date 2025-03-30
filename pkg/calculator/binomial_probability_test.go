@@ -4,14 +4,15 @@ import (
 	"math/big"
 	"reflect"
 	"testing"
+
 	mu "github.com/ojsung/basic_stats_calculator/internal/math_utils"
 )
 
-func Test_calculateBinomialProbability(t *testing.T) {
+func Test_CalculateBinomialProbability(t *testing.T) {
 	type args = struct {
 		chanceOfSuccess *big.Float
-		trials int64
-		successes int64
+		trials          int64
+		successes       int64
 	}
 	tests := []struct {
 		name string
@@ -21,7 +22,7 @@ func Test_calculateBinomialProbability(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			calculateBinomialProbability(tt.args.chanceOfSuccess, tt.args.trials, tt.args.successes)
+			CalculateBinomialProbability(tt.args.chanceOfSuccess, tt.args.trials, tt.args.successes)
 		})
 	}
 }
@@ -104,13 +105,13 @@ func Test_calculateProbabilityOfKSuccesses(t *testing.T) {
 			name:    "It should return .08192 for p = 0.2, n = k = 5",
 			args:    args{mu.BigFloatFromString("0.2"), 5, 5},
 			wantErr: false,
-			want: mu.BigFloatFromString("0.08192"),
+			want:    mu.BigFloatFromString("0.08192"),
 		},
 		{
 			name:    "It should use special case for k = 0",
 			args:    args{mu.BigFloatFromString("0.1"), 5, 0},
 			wantErr: false,
-			want: mu.BigFloatFromString("0.59049"),
+			want:    mu.BigFloatFromString("0.59049"),
 		},
 	}
 	for _, tt := range tests {
