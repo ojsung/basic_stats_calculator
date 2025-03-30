@@ -10,7 +10,7 @@ func calculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, succ
 	if trials < successes {
 		return big.Float{}, errors.New("binomial probability trials (n) cannot be less than successes (k)")
 	}
-
+	return
 }
 
 func calculateProbabilityOfKSuccesses(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
@@ -19,9 +19,8 @@ func calculateProbabilityOfKSuccesses(chanceOfSuccess *big.Float, trials int64, 
 	}
 	if successes == 0 {
 		exponent := new(big.Float).SetInt64(trials)
-		base := chanceOfSuccess.
 	}
-
+	return
 }
 
 func calculateBinomialCoefficient(trials, successes int64) (coefficient Int, err error) {

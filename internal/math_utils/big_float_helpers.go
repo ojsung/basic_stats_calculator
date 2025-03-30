@@ -1,30 +1,34 @@
 package math_utils
 
-import "math/big"
+import (
+	"errors"
+	"fmt"
+	"math/big"
+)
+
 func BigFloatFromString(value string) *big.Float {
 	f, _ := new(big.Float).SetString(value)
 	return f
 }
 
-func Pow(base *big.Float, exponent *big.Float) *big.Float {
-	
+func Pow(base *big.Float, exponent *big.Float) (power *big.Float, err error) {
+	return
 }
 
-func NaturalPow(exponent *big.Float) *big.Float {
-	
+func NaturalPow(exponent *big.Float) (power *big.Float, err error) {
+	return
 }
 
-func ln(argument *big.Float) *big.Float {
-
+func Ln(argument *big.Float) (logarithm *big.Float, err error) {
+	return
 }
 
-
-func taylorApproximationLn(argument *big.Float) (*big.Float, error) {
+func taylorApproximationLn(argument *big.Float) (logarithm *big.Float, err error) {
 	if argument.Sign() <= 0 {
 		return nil, errors.New("log is only defined for numbers greater than 0")
 	}
-	if new(big.Float).Abs(new(big.Float).Sub(big.NewInt(1))) > 1 {
-		return nil, errors.New("Taylor expansion appx of ln only converges for values (s + 1), s <= 1, received %v", argument)
+	if new(big.Float).Abs(new(big.Float).Sub(argument, new(big.Float).SetInt64(1))).Cmp(new(big.Float).SetInt64(1)) < 1 {
+		return nil, errors.New(fmt.Sprintf("Taylor expansion appx of ln only converges for values (s + 1), s <= 1, received %v", argument))
 	}
-	
+	return
 }
