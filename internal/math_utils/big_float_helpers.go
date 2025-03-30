@@ -83,18 +83,14 @@ func Pow(base *big.Float, exponent *big.Int) (power *big.Float) {
 func binaryPowEven(binaryPow binaryExp) (evenPow binaryExp) {
 	return binaryExp{
 		binaryPow.r,
-		precFloat().Mul(binaryPow.a, binaryPow.a),
-		new(big.Int).Div(binaryPow.x, two),
+		binaryPow.a.Mul(binaryPow.a, binaryPow.a),
+		binaryPow.x.Div(binaryPow.x, two),
 	}
 }
 
 func binaryPowOdd(binaryPow binaryExp) (oddPow binaryExp) {
-	r := precFloat().Mul(binaryPow.a, binaryPow.r)
-	return binaryPowEven(binaryExp{
-		r,
-		binaryPow.a,
-		binaryPow.x,
-	})
+	binaryPow.r.Mul(binaryPow.a, binaryPow.r)
+	return binaryPowEven(binaryPow)
 }
 
 func precFloat() *big.Float {
