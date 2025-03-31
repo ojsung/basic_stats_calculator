@@ -2,6 +2,12 @@
 A calculator with some basic statistics functions. Very basic. Written in Go so I can get some practice in with the language
 Trying to keep the structure as Clean as possible. Trying to keep it as TDD and tested as possible
 
+## Getting Started
+There's not currently any usable entrypoints to the application. Once there's at least one (CLI entrypoint is planned for V1), I will update this section. For now, if you want, you can run the tests
+- Clone this repository
+- Install `go` for your system
+- Run `go test ./...`
+
 ## Roadmap
 A tentative, short-term roadmap. I don't intend for this to be a long project, since I'm just doing it for fun. Roadmaps for release versions will become more specific as I start researching and planning them
 ### V1 (minimum viable product)
@@ -23,7 +29,7 @@ A tentative, short-term roadmap. I don't intend for this to be a long project, s
 - [ ] Add CLI entrypoint to calculator
 
 ### V2
-- [ ] Add Cumulative Sum Calculator
+- [ ] Add p-value Calculator
 - [ ] Add Cumulative Distribution Calculator
 - [ ] Add HTTP server entrypoint to calculator
 - [ ] Add basic html front-end for calculator
@@ -48,4 +54,4 @@ A tentative, short-term roadmap. I don't intend for this to be a long project, s
   - Depends on Ln
 - [ ] Implement `calculator.CalculateBinomialProbability`
   - Depends on `calculator.calculateProbabilityOfKSuccesses`
-- [ ] Publish Release V1
+- [ ] Plan out server
