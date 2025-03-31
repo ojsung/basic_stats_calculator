@@ -3,7 +3,6 @@ package big_helpers
 import (
 	"fmt"
 	"math/big"
-	"strings"
 )
 
 type BinaryExp struct {
@@ -52,39 +51,8 @@ type BinaryExpComparison struct {
 	X comparison[*big.Int]
 }
 
-type StrBigCompare[T big.Float | big.Int] struct {
-	Actual         *T
-	Expected       string
-	ActualAsString string
-}
 
-func (container StrBigCompare[T]) Compare() bool {
-	return container.ActualAsString == container.Expected
-}
-func NewCompare[T big.Float | big.Int](actual *T, expected string) *StrBigCompare[T] {
-	container := StrBigCompare[T]{
-		Actual:   actual,
-		Expected: expected,
-	}
-	decimalIndex := strings.Index(container.Expected, ".")
-	strLen := len(container.Expected)
-	if decimalIndex == -1 {
-		strLen = 0
-	} else {
-		strLen -= (decimalIndex + 1)
-	}
-	switch v := any(container.Actual).(type) {
-	case *big.Float:
-		container.ActualAsString = v.Text('f', strLen)
-	case *big.Int:
-		container.ActualAsString = v.Text(10)
-	default:
-		panic("unsupported type")
-	}
-	return &container
-}
-
-func BigFloatFromString(value string) *big.Float {
+func StrToFloat(value string) *big.Float {
 	f, _ := PrecFloat().SetString(value)
 	return f
 }
@@ -96,3 +64,5 @@ func PrecFloat() *big.Float {
 func NormalizeReturn(value *big.Float) *big.Float {
 	return value.SetMode(big.ToZero).SetPrec(128)
 }
+
+

@@ -63,27 +63,27 @@ func Test_calculateProbabilityOfKSuccesses(t *testing.T) {
 	}{
 		{
 			name:    "It should return an error when trials < successes",
-			args:    args{mu.BigFloatFromString("0.5"), 3, 5},
+			args:    args{mu.StrToFloat("0.5"), 3, 5},
 			wantErr: true,
 			want:    big.NewFloat(0),
 		},
 		{
 			name:    "It should return .0005497558139 for p = 0.2, n = 15, k = 3",
-			args:    args{mu.BigFloatFromString("0.2"), 15, 3},
+			args:    args{mu.StrToFloat("0.2"), 15, 3},
 			wantErr: false,
-			want:    mu.BigFloatFromString(".0005497558139"),
+			want:    mu.StrToFloat(".0005497558139"),
 		},
 		{
 			name:    "It should return .08192 for p = 0.2, n = k = 5",
-			args:    args{mu.BigFloatFromString("0.2"), 5, 5},
+			args:    args{mu.StrToFloat("0.2"), 5, 5},
 			wantErr: false,
-			want:    mu.BigFloatFromString("0.08192"),
+			want:    mu.StrToFloat("0.08192"),
 		},
 		{
 			name:    "It should use special case for k = 0",
-			args:    args{mu.BigFloatFromString("0.1"), 5, 0},
+			args:    args{mu.StrToFloat("0.1"), 5, 0},
 			wantErr: false,
-			want:    mu.BigFloatFromString("0.59049"),
+			want:    mu.StrToFloat("0.59049"),
 		},
 	}
 	for _, tt := range tests {
