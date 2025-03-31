@@ -2,10 +2,9 @@ package calculator
 
 import (
 	"math/big"
-	"reflect"
 	"testing"
 
-	mu "github.com/ojsung/basic_stats_calculator/internal/math_utils"
+	mu "github.com/ojsung/basic_stats_calculator/internal/big_helpers"
 )
 
 func Test_CalculateBinomialProbability(t *testing.T) {
@@ -50,33 +49,6 @@ func Test_calculateBinomialCoefficient(t *testing.T) {
 	}
 }
 
-func Test_factorial(t *testing.T) {
-	tests := []struct {
-		name     string
-		argument int64
-		want     Int
-	}{
-		{
-			"It should return 1 for 0", 0, big.NewInt(1),
-		},
-		{
-			"It should return 1 for 1", 1, big.NewInt(1),
-		},
-		{
-			"It should return 6 for 3", 3, big.NewInt(6),
-		},
-		{
-			"It should return 3628800 for 10", 10, big.NewInt(3628800),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := factorial(tt.argument); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("factorial() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 func Test_calculateProbabilityOfKSuccesses(t *testing.T) {
 	type args struct {
 		chanceOfSuccess *big.Float
