@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/ojsung/basic_stats_calculator/pkg/math_utils"
 )
 
 func CalculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
@@ -28,15 +27,15 @@ func calculateBinomialCoefficient(trials, successes int64) (coefficient Int, err
 	if trials < successes {
 		return nil, errors.New("binomial coefficient trials (n) cannot be less than successes (k)")
 	}
-	numerator, numerError := math_utils.Factorial(trials)
+	numerator, numerError := Factorial(trials)
 	if numerError != nil {
 		return nil, numerError
 	}
-	denominatorMultiplicand, denomMultiplicandError := math_utils.Factorial(trials - successes)
+	denominatorMultiplicand, denomMultiplicandError := Factorial(trials - successes)
 	if denomMultiplicandError != nil {
 		return nil, denomMultiplicandError
 	}
-	denominatorMultiplier, denomMultiplierError := math_utils.Factorial(successes)
+	denominatorMultiplier, denomMultiplierError := Factorial(successes)
 	if denomMultiplierError != nil {
 		return nil, denomMultiplierError
 	}
@@ -44,5 +43,3 @@ func calculateBinomialCoefficient(trials, successes int64) (coefficient Int, err
 }
 
 type Int = *big.Int
-
-

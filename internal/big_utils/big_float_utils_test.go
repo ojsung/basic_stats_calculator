@@ -1,4 +1,4 @@
-package big_helpers
+package big_utils
 
 import (
 	"math/big"
