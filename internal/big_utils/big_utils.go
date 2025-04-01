@@ -1,4 +1,4 @@
-package big_helpers
+package big_utils
 
 import (
 	"math/big"
@@ -51,4 +51,21 @@ func ToStr[T big.Int | big.Float](value *T, places ...int) string {
 	default:
 		panic("unsupported type")
 	}
+}
+
+func RoundUp(float *big.Float) *big.Int {
+	intVal, _ := float.Int(new(big.Int))
+	if float.IsInt() || float.Sign() == -1 {
+		return intVal
+	}
+
+	return intVal.Add(intVal, big.NewInt(1))
+}
+
+func RoundDown(float *big.Float) *big.Int {
+	intVal, _ := float.Int(new(big.Int))
+	if float.IsInt() || float.Sign() == 1 {
+		return intVal
+	}
+	return intVal.Sub(intVal, big.NewInt(1))
 }

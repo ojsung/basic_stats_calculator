@@ -1,4 +1,4 @@
-package big_helpers
+package big_utils
 
 import (
 	"fmt"
@@ -51,7 +51,6 @@ type BinaryExpComparison struct {
 	X comparison[*big.Int]
 }
 
-
 func StrToFloat(value string) *big.Float {
 	f, _ := PrecFloat().SetString(value)
 	return f
@@ -64,5 +63,3 @@ func PrecFloat() *big.Float {
 func NormalizeReturn(value *big.Float) *big.Float {
 	return value.SetMode(big.ToZero).SetPrec(128)
 }
-
-
