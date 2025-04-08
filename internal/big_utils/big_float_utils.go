@@ -56,8 +56,12 @@ func StrToFloat(value string) *big.Float {
 	return f
 }
 
-func PrecFloat() *big.Float {
-	return new(big.Float).SetPrec(256).SetMode(big.ToNearestEven)
+func PrecFloat(precision ...uint) *big.Float {
+	prec := uint(256)
+	if len(precision) != 0 {
+		prec = precision[0]
+	}
+	return new(big.Float).SetPrec(prec).SetMode(big.ToNearestEven)
 }
 
 func NormalizeReturn(value *big.Float) *big.Float {
