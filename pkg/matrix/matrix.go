@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	su "github.com/ojsung/basic_stats_calculator/internal"
+	op "github.com/ojsung/basic_stats_calculator/pkg/operand"
 )
 
 /*
@@ -28,28 +29,16 @@ Need to be able to
 - Remove column
 */
 
-type Number interface {
-	float64 | int
-}
-
-type BigNumber interface {
-	*big.Float | *big.Int
-}
-
-type FloatNumber interface {
-	*big.Float | float64
-}
-
-type Matrix[T Number | BigNumber, U FloatNumber] struct {
+type Matrix[T op.Number | op.BigNumber, U op.FloatNumber] struct {
 	cells   *[]Cell[T]
 	rows    int
 	columns int
 }
 
-type NumberMatrix[T Number] struct {
+type NumberMatrix[T op.Number] struct {
 	*Matrix[T, float64]
 }
-type BigMatrix[T BigNumber] struct {
+type BigMatrix[T op.BigNumber] struct {
 	*Matrix[T, *big.Float]
 }
 
@@ -176,7 +165,7 @@ func (m *Matrix[T, U]) ScalarMul(scalar T) *Matrix[T, U] {
 	newCells := make([]Cell[T], len(*m.cells))
 	for i, cell := range *m.cells {
 		newCells[i] = Cell[T]{
-			Operand: NewOperand(cell.Operand.MulValue(scalar).Value),
+			Operand: op.NewOperand(cell.Operand.MulValue(scalar).Value),
 			Row:     cell.Row,
 			Column:  cell.Column,
 		}
@@ -193,7 +182,7 @@ func (m *Matrix[T, U]) FractionalScalarMul(scalar U) (floatMatrix *Matrix[U, U])
 		newCell := Cell[U]{
 			Row:     cell.Row,
 			Column:  cell.Column,
-			Operand: ToFloat[T, U](cell.Operand).MulValue(scalar),
+			Operand: op.ToFloat[T, U](cell.Operand).MulValue(scalar),
 		}
 		return newCell
 	})
@@ -277,9 +266,9 @@ func (matrixA Matrix[T, U]) Sub(matrixB *Matrix[T, U]) (difference *Matrix[T, U]
 // Then multiply the eigenvalues together. There is likely a better way to find them programmatically
 // But this is what I could think of
 // We have to be careful not to do any division for our int or *big.Int values, as it could be an int matrix, and to track any scaling we do of rows
-func (m *Matrix[T, U]) Determinant() (determinant Operand[T], err error) {
+func (m *Matrix[T, U]) Determinant() (determinant op.Operand[T], err error) {
 	if len(*m.cells) == 0 {
-		return new(Operand[T]).Zero(), errors.New("matrix must have a length")
+		return new(op.Operand[T]).Zero(), errors.New("matrix must have a length")
 	}
 	baseValue := (*m.cells)[0].Operand
 	zero := baseValue.Zero()
@@ -303,11 +292,11 @@ func (m *Matrix[T, U]) Determinant() (determinant Operand[T], err error) {
 	return determinantOperand, nil
 }
 
-func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedMatrix *Matrix[T, U], scale Operand[T]) {
+func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedMatrix *Matrix[T, U], scale op.Operand[T]) {
 	rows := nonZeroDiagonalMatrix.GetRowOperands()
 	zero := rows[0][0].Zero()
 	scale = rows[0][0].Identity()
-	var rowReducer func(rowIndex int, row []Operand[T], nextRow []Operand[T], scale Operand[T]) (reducedRow []Operand[T], determinantScale Operand[T])
+	var rowReducer func(rowIndex int, row []op.Operand[T], nextRow []op.Operand[T], scale op.Operand[T]) (reducedRow []op.Operand[T], determinantScale op.Operand[T])
 	switch any(zero.Value).(type) {
 	case *big.Int, int:
 		rowReducer = intTriangularRowReducer[T, U]
@@ -315,7 +304,7 @@ func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedM
 		rowReducer = floatTriangularRowReducer[T, U]
 	}
 	lenRows := len(rows)
-	operandRows := make([][]Operand[T], lenRows)
+	operandRows := make([][]op.Operand[T], lenRows)
 	operandRows[0] = rows[0]
 	valueRows := make([][]T, lenRows)
 	for rowIndex, row := range operandRows {
@@ -326,7 +315,7 @@ func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedM
 				operandRows[nextRowIndex] = nextRow
 			}
 		}
-		valueRow := su.Map(row, func(value Operand[T]) T {
+		valueRow := su.Map(row, func(value op.Operand[T]) T {
 			return value.Value
 		})
 		valueRows[rowIndex] = valueRow
@@ -335,7 +324,7 @@ func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedM
 	return triangularizedMatrix, scale
 }
 
-func intTriangularRowReducer[T Number | BigNumber, U FloatNumber](rowIndex int, row []Operand[T], nextRow []Operand[T], scale Operand[T]) (reducedRow []Operand[T], determinantScale Operand[T]) {
+func intTriangularRowReducer[T op.Number | op.BigNumber, U op.FloatNumber](rowIndex int, row []op.Operand[T], nextRow []op.Operand[T], scale op.Operand[T]) (reducedRow []op.Operand[T], determinantScale op.Operand[T]) {
 	rowMultiplier := nextRow[rowIndex]
 	nextRowMultiplier := row[rowIndex]
 	for colIndex, operand := range nextRow {
@@ -345,7 +334,7 @@ func intTriangularRowReducer[T Number | BigNumber, U FloatNumber](rowIndex int, 
 	return nextRow, scale
 }
 
-func floatTriangularRowReducer[T Number | BigNumber, U FloatNumber](rowIndex int, row []Operand[T], nextRow []Operand[T], scale Operand[T]) (reducedRow []Operand[T], determinantScale Operand[T]) {
+func floatTriangularRowReducer[T op.Number | op.BigNumber, U op.FloatNumber](rowIndex int, row []op.Operand[T], nextRow []op.Operand[T], scale op.Operand[T]) (reducedRow []op.Operand[T], determinantScale op.Operand[T]) {
 	ratio := nextRow[rowIndex].Div(row[rowIndex])
 	for colIndex, operand := range nextRow {
 		nextRow[colIndex] = operand.Sub(row[colIndex].Mul(ratio))
@@ -355,7 +344,7 @@ func floatTriangularRowReducer[T Number | BigNumber, U FloatNumber](rowIndex int
 
 func (m Matrix[T, U]) Trace() (trace T, err error) {
 	if len(*m.cells) == 0 {
-		return new(Operand[T]).Zero().Value, errors.New("matrix must have a length")
+		return new(op.Operand[T]).Zero().Value, errors.New("matrix must have a length")
 	}
 	baseValue := (*m.cells)[0].Operand
 	zero := baseValue.Zero()
@@ -402,8 +391,8 @@ func (m Matrix[T, U]) GetColumns() (columns [][]T) {
 	return
 }
 
-func (m Matrix[T, U]) GetRowOperands() (rows [][]Operand[T]) {
-	rows = make([][]Operand[T], m.rows)
+func (m Matrix[T, U]) GetRowOperands() (rows [][]op.Operand[T]) {
+	rows = make([][]op.Operand[T], m.rows)
 	for _, cell := range *m.cells {
 		rows[cell.Row] = append(rows[cell.Row], cell.Operand)
 	}
@@ -418,8 +407,8 @@ func (m Matrix[T, U]) GetRowCells() (rows [][]Cell[T]) {
 	return
 }
 
-func (m Matrix[T, U]) GetColumnOperands() (columns [][]Operand[T]) {
-	columns = make([][]Operand[T], m.columns)
+func (m Matrix[T, U]) GetColumnOperands() (columns [][]op.Operand[T]) {
+	columns = make([][]op.Operand[T], m.columns)
 	for _, cell := range *m.cells {
 		columns[cell.Column] = append(columns[cell.Column], cell.Operand)
 	}
@@ -481,8 +470,8 @@ func (m Matrix[T, U]) Inverse() (inverse *Matrix[U, U], isSingular bool, err err
 	if err != nil {
 		return nil, false, err
 	}
-	floatIdentity := ToFloat[T, U](identity)
-	floatDeterminant := ToFloat[T, U](determinant)
+	floatIdentity := op.ToFloat[T, U](identity)
+	floatDeterminant := op.ToFloat[T, U](determinant)
 	cofactorMatrix, err := m.CofactorMatrix() 
 	if err != nil {
 		return nil, false, err
@@ -510,9 +499,9 @@ func (m Matrix[T, U]) Transpose() (transpose *Matrix[T, U]) {
 	return
 }
 
-func (m Matrix[T, U]) Cofactor(rowIndex int, colIndex int) (cofactor Operand[T], err error) {
+func (m Matrix[T, U]) Cofactor(rowIndex int, colIndex int) (cofactor op.Operand[T], err error) {
 	if len(*m.cells) == 0 {
-		return Operand[T]{}.Zero(), errors.New("cannot find cofactor of empty matrix")
+		return op.Operand[T]{}.Zero(), errors.New("cannot find cofactor of empty matrix")
 	}
 	base := (*m.cells)[0].Operand
 	zero := base.Zero();
@@ -549,7 +538,7 @@ func (m Matrix[T, U]) CofactorMatrix() (cofactorMatrix *Matrix[T, U], err error)
 		if err != nil {
 			return nil, err
 		}
-		var sign Operand[T] 
+		var sign op.Operand[T] 
 		if (cell.Row + cell.Column) % 2 == 0 {
 			sign = mCells[0].Operand.Identity()
 		} else {
@@ -573,26 +562,26 @@ func (m Matrix[T, U]) String() string {
 	rows := m.GetRows()
 	rowsAsString := su.Map(rows, func(row []T) string {
 		stringRow := su.Map(row, func(value T) string {
-			return NewOperand(value).String()
+			return op.NewOperand(value).String()
 		})
 		return fmt.Sprintln("[", strings.Join(stringRow, ", "), "]")
 	})
 	return fmt.Sprintln("[\n", strings.Join(rowsAsString, "\n"), "\n]")
 }
 
-func NewNumberMatrix[T Number](rows [][]T) (matrix *NumberMatrix[T], err error) {
+func NewNumberMatrix[T op.Number](rows [][]T) (matrix *NumberMatrix[T], err error) {
 	returnedMatrix, err := NewMatrix[T, float64](rows)
 	matrix = &NumberMatrix[T]{Matrix: returnedMatrix}
 	return
 }
 
-func NewBigMatrix[T BigNumber](rows [][]T) (matrix *BigMatrix[T], err error) {
+func NewBigMatrix[T op.BigNumber](rows [][]T) (matrix *BigMatrix[T], err error) {
 	returnedMatrix, err := NewMatrix[T, *big.Float](rows)
 	matrix = &BigMatrix[T]{Matrix: returnedMatrix}
 	return
 }
 
-func NewMatrix[T Number | BigNumber, U FloatNumber](rows [][]T) (matrix *Matrix[T, U], err error) {
+func NewMatrix[T op.Number | op.BigNumber, U op.FloatNumber](rows [][]T) (matrix *Matrix[T, U], err error) {
 	if len(rows) == 0 {
 		return &Matrix[T, U]{cells: &[]Cell[T]{}}, nil
 	}
@@ -606,7 +595,7 @@ func NewMatrix[T Number | BigNumber, U FloatNumber](rows [][]T) (matrix *Matrix[
 	return
 }
 
-func buildCells[T Number | BigNumber](rows [][]T) (cells *[]Cell[T], err error) {
+func buildCells[T op.Number | op.BigNumber](rows [][]T) (cells *[]Cell[T], err error) {
 	cells = &[]Cell[T]{}
 	firstRowLength := len(rows[0])
 	for rowIndex, row := range rows {
@@ -618,7 +607,7 @@ func buildCells[T Number | BigNumber](rows [][]T) (cells *[]Cell[T], err error) 
 			cell := Cell[T]{
 				Row:     rowIndex,
 				Column:  colIndex,
-				Operand: NewOperand(element),
+				Operand: op.NewOperand(element),
 			}
 			newCells := append(*cells, cell)
 			cells = &newCells

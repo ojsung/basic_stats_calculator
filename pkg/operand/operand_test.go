@@ -1,4 +1,4 @@
-package matrix
+package operand
 
 import (
 	"math/big"
