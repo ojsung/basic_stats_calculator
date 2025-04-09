@@ -1,4 +1,4 @@
-package matrix
+package operand
 
 import (
 	"fmt"
@@ -7,6 +7,17 @@ import (
 	bu "github.com/ojsung/basic_stats_calculator/internal/big_utils"
 )
 
+type Number interface {
+	float64 | int
+}
+
+type BigNumber interface {
+	*big.Float | *big.Int
+}
+
+type FloatNumber interface {
+	*big.Float | float64
+}
 
 type Operand[T Number | BigNumber] struct {
 	Value T
@@ -63,8 +74,8 @@ func (m Operand[T]) AddValue(summand T) (sum Operand[T]) {
 	case *big.Float:
 		var prec uint
 		if v == nil {
-			println("adding to nil for Operand[*big.Float]. Using default value 0 with 52 bit precision")
-			prec = 52
+			println("adding to nil for Operand[*big.Float]. Using default value 0 with 64 bit precision")
+			prec = 64
 			m.Value = any(bu.PrecFloat(prec).Add(bu.PrecFloat(prec).SetInt64(0), any(summand).(*big.Float))).(T)
 		} else {
 			prec = v.Prec()
@@ -92,8 +103,8 @@ func (m Operand[T]) SubValue(subtrahend T) (difference Operand[T]) {
 	case *big.Float:
 		var prec uint
 		if v == nil {
-			println("subtracting from nil for Operand[*big.Float]. Using default value 0 with 52 bit precision")
-			prec = 52
+			println("subtracting from nil for Operand[*big.Float]. Using default value 0 with 64 bit precision")
+			prec = 64
 			m.Value = any(bu.PrecFloat(prec).Sub(bu.PrecFloat(prec).SetInt64(0), any(subtrahend).(*big.Float))).(T)
 		} else {
 			prec = v.Prec()
@@ -119,8 +130,8 @@ func (m Operand[T]) MulValue(multiplier T) (product Operand[T]) {
 	case *big.Float:
 		var prec uint
 		if v == nil {
-			println("multiplying on nil for Operand[*big.Float]. Using default value 0 with 52 bit precision")
-			prec = 52
+			println("multiplying on nil for Operand[*big.Float]. Using default value 0 with 64 bit precision")
+			prec = 64
 			m.Value = any(bu.PrecFloat(prec).SetInt64(0)).(T)
 		} else {
 			prec = v.Prec()
@@ -146,8 +157,8 @@ func (m Operand[T]) DivValue(divisor T) (quotient Operand[T]) {
 	case *big.Float:
 		var prec uint
 		if v == nil {
-			println("dividing on nil for Operand[*big.Float]. Using default value 0 with 52 bit precision")
-			prec = 52
+			println("dividing on nil for Operand[*big.Float]. Using default value 0 with 64 bit precision")
+			prec = 64
 			m.Value = any(bu.PrecFloat(prec).SetInt64(0)).(T)
 		} else {
 			prec = v.Prec()
@@ -174,7 +185,7 @@ func (m Operand[T]) Zero() (zero Operand[T]) {
 		var prec uint
 		if v == nil {
 			println("called for zero value on nil for Operand[*big.Float]. Using default precision")
-			prec = 52
+			prec = 64
 		} else {
 			prec = v.Prec()
 		}
@@ -195,13 +206,34 @@ func (m Operand[T]) Identity() (identity Operand[T]) {
 		var prec uint
 		if v == nil {
 			println("called for identity on nil for Operand[*big.Float]. Using default precision")
-			prec = 52
+			prec = 64
 		} else {
 			prec = v.Prec()
 		}
 		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(1)).(T)}
 	case *big.Int:
 		return Operand[T]{Value: any(big.NewInt(1)).(T)}
+	}
+	return
+}
+
+func (m Operand[T]) Negation() (negation Operand[T]) {
+	switch v := any(m.Value).(type) {
+	case int:
+		return Operand[T]{Value: any(int(-1)).(T)}
+	case float64:
+		return Operand[T]{Value: any(float64(-1.0)).(T)}
+	case *big.Float:
+		var prec uint
+		if v == nil {
+			println("called for identity on nil for Operand[*big.Float]. Using default precision")
+			prec = 64
+		} else {
+			prec = v.Prec()
+		}
+		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(-1)).(T)}
+	case *big.Int:
+		return Operand[T]{Value: any(big.NewInt(-1)).(T)}
 	}
 	return
 }

@@ -2,11 +2,12 @@ package matrix
 
 import (
 	"fmt"
+	op "github.com/ojsung/basic_stats_calculator/pkg/operand"
 )
 
 
-type Cell[T Number | BigNumber] struct {
-	Operand[T]
+type Cell[T op.Number | op.BigNumber] struct {
+	op.Operand[T]
 	Row    int
 	Column int
 }

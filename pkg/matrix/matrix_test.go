@@ -3,10 +3,11 @@ package matrix
 import (
 	"reflect"
 	"testing"
+	op "github.com/ojsung/basic_stats_calculator/pkg/operand"
 )
 
 func Test_sort(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected *[]Cell[T]
@@ -18,18 +19,18 @@ func Test_sort(t *testing.T) {
 			matrix: &NumberMatrix[int]{
 				&Matrix[int, float64]{
 					cells: &[]Cell[int]{
-						{Operand: NewOperand(6), Row: 1, Column: 1},
-						{Operand: NewOperand(4), Row: 0, Column: 1},
-						{Operand: NewOperand(5), Row: 1, Column: 0},
-						{Operand: NewOperand(3), Row: 0, Column: 0},
+						{Operand: op.NewOperand(6), Row: 1, Column: 1},
+						{Operand: op.NewOperand(4), Row: 0, Column: 1},
+						{Operand: op.NewOperand(5), Row: 1, Column: 0},
+						{Operand: op.NewOperand(3), Row: 0, Column: 0},
 					},
 				},
 			},
 			expected: &[]Cell[int]{
-				{Operand: NewOperand(3), Row: 0, Column: 0},
-				{Operand: NewOperand(4), Row: 0, Column: 1},
-				{Operand: NewOperand(5), Row: 1, Column: 0},
-				{Operand: NewOperand(6), Row: 1, Column: 1},
+				{Operand: op.NewOperand(3), Row: 0, Column: 0},
+				{Operand: op.NewOperand(4), Row: 0, Column: 1},
+				{Operand: op.NewOperand(5), Row: 1, Column: 0},
+				{Operand: op.NewOperand(6), Row: 1, Column: 1},
 			},
 		},
 		{
@@ -41,10 +42,10 @@ func Test_sort(t *testing.T) {
 				},
 			)),
 			expected: &[]Cell[int]{
-				{Operand: NewOperand(3), Row: 0, Column: 0},
-				{Operand: NewOperand(4), Row: 0, Column: 1},
-				{Operand: NewOperand(5), Row: 1, Column: 0},
-				{Operand: NewOperand(6), Row: 1, Column: 1},
+				{Operand: op.NewOperand(3), Row: 0, Column: 0},
+				{Operand: op.NewOperand(4), Row: 0, Column: 1},
+				{Operand: op.NewOperand(5), Row: 1, Column: 0},
+				{Operand: op.NewOperand(6), Row: 1, Column: 1},
 			},
 		},
 	}
@@ -60,7 +61,7 @@ func Test_sort(t *testing.T) {
 }
 
 func Test_reindex(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name            string
 		matrix          NumberMatrix[T]
 		expectedCells *[]Cell[T]
@@ -72,20 +73,20 @@ func Test_reindex(t *testing.T) {
 			name: "should decrement following rows when rows are removed",
 			matrix: NumberMatrix[int]{
 				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
-					{Operand: NewOperand(1), Row: 1, Column: 0},
-					{Operand: NewOperand(2), Row: 1, Column: 1},
-					{Operand: NewOperand(3), Row: 3, Column: 0},
-					{Operand: NewOperand(4), Row: 3, Column: 1},
+					{Operand: op.NewOperand(1), Row: 1, Column: 0},
+					{Operand: op.NewOperand(2), Row: 1, Column: 1},
+					{Operand: op.NewOperand(3), Row: 3, Column: 0},
+					{Operand: op.NewOperand(4), Row: 3, Column: 1},
 				},
 					columns: 2,
 					rows:    4,
 				},
 			},
 			expectedCells: &[]Cell[int]{
-				{Operand: NewOperand(1), Row: 0, Column: 0},
-				{Operand: NewOperand(2), Row: 0, Column: 1},
-				{Operand: NewOperand(3), Row: 1, Column: 0},
-				{Operand: NewOperand(4), Row: 1, Column: 1},
+				{Operand: op.NewOperand(1), Row: 0, Column: 0},
+				{Operand: op.NewOperand(2), Row: 0, Column: 1},
+				{Operand: op.NewOperand(3), Row: 1, Column: 0},
+				{Operand: op.NewOperand(4), Row: 1, Column: 1},
 			},
 			expectedRows:    2,
 			expectedColumns: 2,
@@ -95,20 +96,20 @@ func Test_reindex(t *testing.T) {
 			matrix: NumberMatrix[int]{
 				Matrix: &Matrix[int, float64]{
 					cells: &[]Cell[int]{
-						{Operand: NewOperand(1), Row: 0, Column: 1},
-						{Operand: NewOperand(2), Row: 0, Column: 4},
-						{Operand: NewOperand(3), Row: 1, Column: 1},
-						{Operand: NewOperand(4), Row: 1, Column: 4},
+						{Operand: op.NewOperand(1), Row: 0, Column: 1},
+						{Operand: op.NewOperand(2), Row: 0, Column: 4},
+						{Operand: op.NewOperand(3), Row: 1, Column: 1},
+						{Operand: op.NewOperand(4), Row: 1, Column: 4},
 					},
 					columns: 5,
 					rows:    2,
 				},
 			},
 			expectedCells: &[]Cell[int]{
-				{Operand: NewOperand(1), Row: 0, Column: 0},
-				{Operand: NewOperand(2), Row: 0, Column: 1},
-				{Operand: NewOperand(3), Row: 1, Column: 0},
-				{Operand: NewOperand(4), Row: 1, Column: 1},
+				{Operand: op.NewOperand(1), Row: 0, Column: 0},
+				{Operand: op.NewOperand(2), Row: 0, Column: 1},
+				{Operand: op.NewOperand(3), Row: 1, Column: 0},
+				{Operand: op.NewOperand(4), Row: 1, Column: 1},
 			},
 			expectedRows:    2,
 			expectedColumns: 2,
@@ -117,20 +118,20 @@ func Test_reindex(t *testing.T) {
 			name: "should decrement following columns and columns when rows and columns are removed",
 			matrix: NumberMatrix[int]{
 				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
-					{Operand: NewOperand(1), Row: 2, Column: 1},
-					{Operand: NewOperand(2), Row: 2, Column: 4},
-					{Operand: NewOperand(3), Row: 5, Column: 1},
-					{Operand: NewOperand(4), Row: 5, Column: 4},
+					{Operand: op.NewOperand(1), Row: 2, Column: 1},
+					{Operand: op.NewOperand(2), Row: 2, Column: 4},
+					{Operand: op.NewOperand(3), Row: 5, Column: 1},
+					{Operand: op.NewOperand(4), Row: 5, Column: 4},
 				},
 					rows:    6,
 					columns: 5,
 				},
 			},
 			expectedCells: &[]Cell[int]{
-				{Operand: NewOperand(1), Row: 0, Column: 0},
-				{Operand: NewOperand(2), Row: 0, Column: 1},
-				{Operand: NewOperand(3), Row: 1, Column: 0},
-				{Operand: NewOperand(4), Row: 1, Column: 1},
+				{Operand: op.NewOperand(1), Row: 0, Column: 0},
+				{Operand: op.NewOperand(2), Row: 0, Column: 1},
+				{Operand: op.NewOperand(3), Row: 1, Column: 0},
+				{Operand: op.NewOperand(4), Row: 1, Column: 1},
 			},
 			expectedRows:    2,
 			expectedColumns: 2,
@@ -153,7 +154,7 @@ func Test_reindex(t *testing.T) {
 }
 
 func Test_Cells(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   NumberMatrix[T]
 		expected *[]Cell[T]
@@ -164,17 +165,17 @@ func Test_Cells(t *testing.T) {
 			name: "Retrieve cells from matrix",
 			matrix: NumberMatrix[int]{
 				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
-					{Operand: NewOperand(3), Row: 1, Column: 1},
-					{Operand: NewOperand(4), Row: 1, Column: 2},
-					{Operand: NewOperand(5), Row: 2, Column: 1},
-					{Operand: NewOperand(6), Row: 2, Column: 2},
+					{Operand: op.NewOperand(3), Row: 1, Column: 1},
+					{Operand: op.NewOperand(4), Row: 1, Column: 2},
+					{Operand: op.NewOperand(5), Row: 2, Column: 1},
+					{Operand: op.NewOperand(6), Row: 2, Column: 2},
 				}},
 			},
 			expected: &[]Cell[int]{
-				{Operand: NewOperand(3), Row: 1, Column: 1},
-				{Operand: NewOperand(4), Row: 1, Column: 2},
-				{Operand: NewOperand(5), Row: 2, Column: 1},
-				{Operand: NewOperand(6), Row: 2, Column: 2},
+				{Operand: op.NewOperand(3), Row: 1, Column: 1},
+				{Operand: op.NewOperand(4), Row: 1, Column: 2},
+				{Operand: op.NewOperand(5), Row: 2, Column: 1},
+				{Operand: op.NewOperand(6), Row: 2, Column: 2},
 			},
 		},
 	}
@@ -191,7 +192,7 @@ func Test_Cells(t *testing.T) {
 
 // Placeholder removed as no additional code was required to be inserted.
 func Test_RemoveColumnsInPlace(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name           string
 		matrix         *NumberMatrix[T]
 		indices        []int
@@ -284,7 +285,7 @@ func Test_RemoveColumnsInPlace(t *testing.T) {
 }
 
 func Test_Transpose(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected *NumberMatrix[T]
@@ -369,7 +370,7 @@ func Test_Transpose(t *testing.T) {
 	}
 }
 func Test_RemoveRowsInPlace(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name           string
 		matrix         *NumberMatrix[T]
 		indices        []int
@@ -462,7 +463,7 @@ func Test_RemoveRowsInPlace(t *testing.T) {
 }
 
 func Test_ScalarMul(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		scalar   T
@@ -552,7 +553,7 @@ func Test_ScalarMul(t *testing.T) {
 	})
 }
 func Test_MatrixMul(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrixA  *NumberMatrix[T]
 		matrixB  *NumberMatrix[T]
@@ -686,7 +687,7 @@ func Test_MatrixMul(t *testing.T) {
 	}
 }
 func Test_Add(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrixA  *NumberMatrix[T]
 		matrixB  *NumberMatrix[T]
@@ -760,7 +761,7 @@ func Test_Add(t *testing.T) {
 	}
 }
 func Test_Sub(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrixA  *NumberMatrix[T]
 		matrixB  *NumberMatrix[T]
@@ -856,7 +857,7 @@ func Test_Sub(t *testing.T) {
 	}
 }
 func Test_Trace(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected T
@@ -920,7 +921,7 @@ func Test_Trace(t *testing.T) {
 	}
 }
 func Test_IsSquare(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected bool
@@ -974,7 +975,7 @@ func Test_IsSquare(t *testing.T) {
 }
 
 func Test_NewMatrix(t *testing.T) {
-	type testCase[T Number, U float64] struct {
+	type testCase[T op.Number, U float64] struct {
 		name     string
 		rows     [][]T
 		expected *Matrix[T, U]
@@ -990,10 +991,10 @@ func Test_NewMatrix(t *testing.T) {
 			},
 			expected: &Matrix[int, float64]{
 				cells: &[]Cell[int]{
-					{Operand: NewOperand(1), Row: 0, Column: 0},
-					{Operand: NewOperand(2), Row: 0, Column: 1},
-					{Operand: NewOperand(3), Row: 1, Column: 0},
-					{Operand: NewOperand(4), Row: 1, Column: 1},
+					{Operand: op.NewOperand(1), Row: 0, Column: 0},
+					{Operand: op.NewOperand(2), Row: 0, Column: 1},
+					{Operand: op.NewOperand(3), Row: 1, Column: 0},
+					{Operand: op.NewOperand(4), Row: 1, Column: 1},
 				},
 			},
 			wantErr: false,
@@ -1007,15 +1008,15 @@ func Test_NewMatrix(t *testing.T) {
 			},
 			expected: &Matrix[int, float64]{
 				cells: &[]Cell[int]{
-					{Operand: NewOperand(1), Row: 0, Column: 0},
-					{Operand: NewOperand(2), Row: 0, Column: 1},
-					{Operand: NewOperand(3), Row: 0, Column: 2},
-					{Operand: NewOperand(4), Row: 1, Column: 0},
-					{Operand: NewOperand(5), Row: 1, Column: 1},
-					{Operand: NewOperand(6), Row: 1, Column: 2},
-					{Operand: NewOperand(7), Row: 2, Column: 0},
-					{Operand: NewOperand(8), Row: 2, Column: 1},
-					{Operand: NewOperand(9), Row: 2, Column: 2},
+					{Operand: op.NewOperand(1), Row: 0, Column: 0},
+					{Operand: op.NewOperand(2), Row: 0, Column: 1},
+					{Operand: op.NewOperand(3), Row: 0, Column: 2},
+					{Operand: op.NewOperand(4), Row: 1, Column: 0},
+					{Operand: op.NewOperand(5), Row: 1, Column: 1},
+					{Operand: op.NewOperand(6), Row: 1, Column: 2},
+					{Operand: op.NewOperand(7), Row: 2, Column: 0},
+					{Operand: op.NewOperand(8), Row: 2, Column: 1},
+					{Operand: op.NewOperand(9), Row: 2, Column: 2},
 				},
 			},
 			wantErr: false,
@@ -1053,7 +1054,7 @@ func Test_NewMatrix(t *testing.T) {
 	}
 }
 func Test_Determinant(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected T
@@ -1127,7 +1128,7 @@ func Test_Determinant(t *testing.T) {
 	}
 }
 func Test_Rows(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected int
@@ -1172,7 +1173,7 @@ func Test_Rows(t *testing.T) {
 }
 
 func Test_Columns(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected int
@@ -1219,7 +1220,7 @@ func Test_Columns(t *testing.T) {
 }
 
 func Test_GetRows(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected [][]T
@@ -1270,7 +1271,7 @@ func Test_GetRows(t *testing.T) {
 }
 
 func Test_GetColumns(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected [][]T
@@ -1323,7 +1324,7 @@ func Test_GetColumns(t *testing.T) {
 }
 
 func Test_GetRow(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		index    int
@@ -1429,7 +1430,7 @@ func Test_GetRow(t *testing.T) {
 }
 
 func Test_GetColumn(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		index    int
@@ -1534,7 +1535,7 @@ func Test_GetColumn(t *testing.T) {
 }
 
 func Test_RemoveRows(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name           string
 		matrix         *NumberMatrix[T]
 		indices        []int
@@ -1651,7 +1652,7 @@ func Test_RemoveRows(t *testing.T) {
 }
 
 func Test_RemoveColumns(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name           string
 		matrix         *NumberMatrix[T]
 		indices        []int
@@ -1769,7 +1770,7 @@ func Test_RemoveColumns(t *testing.T) {
 }
 
 func Test_CofactorMatrix(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected *NumberMatrix[T]
@@ -1863,7 +1864,7 @@ func Test_CofactorMatrix(t *testing.T) {
 }
 
 func Test_Cofactor(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		rowIndex int
@@ -1963,7 +1964,7 @@ func Test_Cofactor(t *testing.T) {
 }
 
 func Test_Inverse(t *testing.T) {
-	type testCase[T Number] struct {
+	type testCase[T op.Number] struct {
 		name     string
 		matrix   *NumberMatrix[T]
 		expected *NumberMatrix[float64]
@@ -2058,7 +2059,7 @@ func Test_Inverse(t *testing.T) {
 	}
 }
 
-func getAssumedNoErrorMatrix[T Number](matrix *NumberMatrix[T], err error) *NumberMatrix[T] {
+func getAssumedNoErrorMatrix[T op.Number](matrix *NumberMatrix[T], err error) *NumberMatrix[T] {
 	if err != nil {
 		panic("error should be nil")
 	}
