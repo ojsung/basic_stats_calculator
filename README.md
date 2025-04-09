@@ -20,7 +20,19 @@ A tentative, short-term roadmap. I don't intend for this to be a long project, s
     - [x] Exp (e^x)
     - [ ] Ln
       - [x] Calculate using Taylor expansion for `ln(x+1)` and mantissa with base 2
-      - [ ] Calculate edges of Taylor expansion's domain using Pade approximant (or continued fractions if I can figure out a way to do it)
+      - [ ] Calculate edges of Taylor expansion's domain using Pade approximant
+         - [x] Add matrix operations to allow programmatically solving linear equations
+           - [x] Determinant
+           - [x] Cofactor
+           - [x] Cofactor Matrix
+           - [x] Transpose
+           - [x] Inverse
+           - [x] Trace
+           - [x] Add
+           - [x] Subtract
+           - [x] Scalar Multiply
+           - [x] Matrix Multiply
+           - [x] Remove columns and rows 
     - [x] Euler's Number
   - [x] Create big_utils package to hold useful functions for working with values in `math/big`
     - [x] String to Float
@@ -47,11 +59,12 @@ A tentative, short-term roadmap. I don't intend for this to be a long project, s
 ## Current Tasks
 ### V0
 - [ ] Switch math_utils.Ln to use Pade Approximant near those points instead of Taylor series expansion
-   - It's currently using the Taylor expansion series to estimate Ln values between 0 and 2. However, at the edges of its domain (very near 0 and very near 2), the series converges _very_ slowly (for `ln(1.999999)`, it will take around 2.5 million terms to reach 16 decimal places of accuracy)
-   - Switch this to use a Pade Approximant
-   - or maybe continued fractions if I can figure out how to that'd be very cool. The terms of the expansion of `ln(x+1)` look very similar to the approximation of `atanh`. Plus I wouldn't have to solve a bunch of linear equations which would be great
+   - It's currently using the Taylor expansion series to estimate Ln values between 0 and 2. However, at the edges of its domain (very near 0 and very near 2), the series converges _very_ slowly (for `ln(2)`, it will take around 2.5 million terms to reach 16 decimal places of accuracy)
+   - [ ] Switch this to use a Pade Approximant
+     - [x] Add matrix operations to allow programmatically solving linear equations
+     - [ ] As needed, solve Pade Approximant terms to meet user's precision requirements
 - [ ] Implement `calculator.calculateProbabilityOfKSuccesses`
   - Depends on Ln
 - [ ] Implement `calculator.CalculateBinomialProbability`
   - Depends on `calculator.calculateProbabilityOfKSuccesses`
-- [ ] Plan out server
+- [ ] Plan out CLI entrypoint
