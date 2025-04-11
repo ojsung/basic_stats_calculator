@@ -501,7 +501,7 @@ func Test_Operand_Zero(t *testing.T) {
 
 	for _, tt := range intTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Zero()
+			result := Zero[int]()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("Operand.Zero() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -509,7 +509,7 @@ func Test_Operand_Zero(t *testing.T) {
 	}
 	for _, tt := range float64Tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Zero()
+			result := Zero[float64]()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("Operand.Zero() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -517,7 +517,7 @@ func Test_Operand_Zero(t *testing.T) {
 	}
 	for _, tt := range bigIntTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Zero()
+			result := Zero[*big.Int]()
 			if result.Value.Cmp(tt.expected.Value) != 0 {
 				t.Errorf("Operand.Zero() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -525,7 +525,7 @@ func Test_Operand_Zero(t *testing.T) {
 	}
 	for _, tt := range bigFloatTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Zero()
+			result := Zero[*big.Float]()
 			if result.Value.Cmp(tt.expected.Value) != 0 {
 				t.Errorf("Operand.Zero() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -574,7 +574,7 @@ func Test_Operand_Identity(t *testing.T) {
 
 	for _, tt := range intTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Identity()
+			result := Identity[int]()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("Operand.Identity() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -582,7 +582,7 @@ func Test_Operand_Identity(t *testing.T) {
 	}
 	for _, tt := range float64Tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Identity()
+			result := Identity[float64]()
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("Operand.Identity() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -590,7 +590,7 @@ func Test_Operand_Identity(t *testing.T) {
 	}
 	for _, tt := range bigIntTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Identity()
+			result := Identity[*big.Int]()
 			if result.Value.Cmp(tt.expected.Value) != 0 {
 				t.Errorf("Operand.Identity() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -598,7 +598,7 @@ func Test_Operand_Identity(t *testing.T) {
 	}
 	for _, tt := range bigFloatTests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := tt.operand.Identity()
+			result := Identity[*big.Float]()
 			if result.Value.Cmp(tt.expected.Value) != 0 {
 				t.Errorf("Operand.Identity() failed. Got %v, expected %v", result, tt.expected)
 			}
@@ -731,3 +731,84 @@ func Test_Operand_Cmp(t *testing.T) {
 		})
 	}
 }
+func Test_FromInt(t *testing.T) {
+	type testCase[T Number | BigNumber] struct {
+		name       string
+		integer    int
+		precision  []uint
+		expected   Operand[T]
+	}
+
+	intTests := []testCase[int]{
+		{
+			name:     "FromInt with int",
+			integer:  5,
+			expected: Operand[int]{Value: 5},
+		},
+	}
+
+	float64Tests := []testCase[float64]{
+		{
+			name:     "FromInt with float64",
+			integer:  5,
+			expected: Operand[float64]{Value: 5.0},
+		},
+	}
+
+	bigIntTests := []testCase[*big.Int]{
+		{
+			name:     "FromInt with *big.Int",
+			integer:  42,
+			expected: Operand[*big.Int]{Value: big.NewInt(42)},
+		},
+	}
+
+	bigFloatTests := []testCase[*big.Float]{
+		{
+			name:      "FromInt with *big.Float and default precision",
+			integer:   42,
+			precision: nil,
+			expected:  Operand[*big.Float]{Value: big.NewFloat(42).SetPrec(64)},
+		},
+		{
+			name:      "FromInt with *big.Float and custom precision",
+			integer:   42,
+			precision: []uint{128},
+			expected:  Operand[*big.Float]{Value: big.NewFloat(42).SetPrec(128)},
+		},
+	}
+
+	for _, tt := range intTests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FromInt[int](tt.integer)
+			if !reflect.DeepEqual(result, tt.expected) {
+				t.Errorf("FromInt() failed. Got %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+	for _, tt := range float64Tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FromInt[float64](tt.integer)
+			if !reflect.DeepEqual(result, tt.expected) {
+				t.Errorf("FromInt() failed. Got %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+	for _, tt := range bigIntTests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FromInt[*big.Int](tt.integer)
+			if result.Value.Cmp(tt.expected.Value) != 0 {
+				t.Errorf("FromInt() failed. Got %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+	for _, tt := range bigFloatTests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FromInt[*big.Float](tt.integer, tt.precision...)
+			if result.Value.Cmp(tt.expected.Value) != 0 {
+				t.Errorf("FromInt() failed. Got %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+}
+

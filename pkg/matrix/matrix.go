@@ -214,7 +214,7 @@ func (matrixA Matrix[T, U]) Mul(matrixB *Matrix[T, U]) (product *Matrix[T, U], e
 		cell := Cell[T]{
 			Row:     rowIndex,
 			Column:  columnIndex,
-			Operand: matrixACells[0].Operand.Zero(),
+			Operand: op.Zero[T](),
 		}
 		for k := range matrixA.columns {
 			matrixACell := matrixACells[rowIndex*matrixA.columns+k]
@@ -268,11 +268,10 @@ func (matrixA Matrix[T, U]) Sub(matrixB *Matrix[T, U]) (difference *Matrix[T, U]
 // We have to be careful not to do any division for our int or *big.Int values, as it could be an int matrix, and to track any scaling we do of rows
 func (m *Matrix[T, U]) Determinant() (determinant op.Operand[T], err error) {
 	if len(*m.cells) == 0 {
-		return new(op.Operand[T]).Zero(), errors.New("matrix must have a length")
+		return op.Zero[T](), errors.New("matrix must have a length")
 	}
-	baseValue := (*m.cells)[0].Operand
-	zero := baseValue.Zero()
-	identity := baseValue.Identity()
+	zero := op.Zero[T]()
+	identity := op.Identity[T]()
 	if !m.IsSquare() {
 		return zero, errors.New("cannot find determinant for non-square matrix")
 	}
@@ -282,7 +281,7 @@ func (m *Matrix[T, U]) Determinant() (determinant op.Operand[T], err error) {
 	}
 	triangularized, scale := orderedMatrix.UpperTriangularize()
 	determinantOperand := identity
-	determinantOperand = determinantOperand.Mul(baseValue.FromInt(sign))
+	determinantOperand = determinantOperand.Mul(op.FromInt[T](sign))
 	triangularRows := triangularized.GetRowOperands()
 	for index := range triangularized.Rows() {
 		determinantOperand = determinantOperand.Mul(triangularRows[index][index])
@@ -294,8 +293,8 @@ func (m *Matrix[T, U]) Determinant() (determinant op.Operand[T], err error) {
 
 func (nonZeroDiagonalMatrix *Matrix[T, U]) UpperTriangularize() (triangularizedMatrix *Matrix[T, U], scale op.Operand[T]) {
 	rows := nonZeroDiagonalMatrix.GetRowOperands()
-	zero := rows[0][0].Zero()
-	scale = rows[0][0].Identity()
+	zero := op.Zero[T]()
+	scale = op.Identity[T]()
 	var rowReducer func(rowIndex int, row []op.Operand[T], nextRow []op.Operand[T], scale op.Operand[T]) (reducedRow []op.Operand[T], determinantScale op.Operand[T])
 	switch any(zero.Value).(type) {
 	case *big.Int, int:
@@ -344,10 +343,9 @@ func floatTriangularRowReducer[T op.Number | op.BigNumber, U op.FloatNumber](row
 
 func (m Matrix[T, U]) Trace() (trace T, err error) {
 	if len(*m.cells) == 0 {
-		return new(op.Operand[T]).Zero().Value, errors.New("matrix must have a length")
+		return op.Zero[T]().Value, errors.New("matrix must have a length")
 	}
-	baseValue := (*m.cells)[0].Operand
-	zero := baseValue.Zero()
+	zero := op.Zero[T]()
 	if !m.IsSquare() {
 		return zero.Value, errors.New("cannot find determinant for non-square matrix")
 	}
@@ -460,9 +458,8 @@ func (m Matrix[T, U]) Inverse() (inverse *Matrix[U, U], isSingular bool, err err
 	if !m.IsSquare() {
 		return nil, false, errors.New("cannot find inverse of non-square matrix")
 	}
-	base := (*m.cells)[0].Operand
-	zero := base.Zero()
-	identity := (*m.cells)[0].Operand.Identity()
+	zero := op.Zero[T]()
+	identity := op.Identity[T]()
 	determinant, err := m.Determinant()
 	if determinant.Cmp(zero) == 0 {
 		return nil, true, err
@@ -501,11 +498,10 @@ func (m Matrix[T, U]) Transpose() (transpose *Matrix[T, U]) {
 
 func (m Matrix[T, U]) Cofactor(rowIndex int, colIndex int) (cofactor op.Operand[T], err error) {
 	if len(*m.cells) == 0 {
-		return op.Operand[T]{}.Zero(), errors.New("cannot find cofactor of empty matrix")
+		return op.Zero[T](), errors.New("cannot find cofactor of empty matrix")
 	}
-	base := (*m.cells)[0].Operand
-	zero := base.Zero();
-	identity := base.Identity()
+	zero := op.Zero[T]();
+	identity := op.Identity[T]()
 	if m.rows == 1 && m.columns == 1 {
 		return identity, nil
 	}
@@ -540,9 +536,9 @@ func (m Matrix[T, U]) CofactorMatrix() (cofactorMatrix *Matrix[T, U], err error)
 		}
 		var sign op.Operand[T] 
 		if (cell.Row + cell.Column) % 2 == 0 {
-			sign = mCells[0].Operand.Identity()
+			sign = op.Identity[T]()
 		} else {
-			sign = mCells[0].Operand.FromInt(-1)
+			sign = op.Negation[T]()
 		}
 		cofactorCells[index] = Cell[T]{
 			Row: cell.Row,

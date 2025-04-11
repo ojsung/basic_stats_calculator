@@ -53,12 +53,12 @@ func (m Cell[T]) DivValue(divisor T) (quotient Cell[T]) {
 }
 
 func (m Cell[T]) Zero() (zero Cell[T]) {
-	m.Operand = m.Operand.Zero()
+	m.Operand = op.Zero[T]()
 	return m
 }
 
 func (m Cell[T]) Identity() (identity Cell[T]) {
-	m.Operand = m.Operand.Identity()
+	m.Operand = op.Identity[T]()
 	return m
 }
 

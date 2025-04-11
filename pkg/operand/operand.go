@@ -7,6 +7,8 @@ import (
 	bu "github.com/ojsung/basic_stats_calculator/internal/big_utils"
 )
 
+// TODO: all *big.Float operations should use the greatest precision value
+
 type Number interface {
 	float64 | int
 }
@@ -42,27 +44,6 @@ func (m Operand[T]) String() string {
 		typeString = "*big.Int"
 	}
 	return fmt.Sprintf("Operand[%v]{%v}", typeString, m.Value)
-}
-
-func (m Operand[T]) FromInt(integer int) (operand Operand[T]) {
-	switch v := any(m.Value).(type) {
-	case int:
-		m.Value = any(integer).(T)
-	case float64:
-		m.Value = any(float64(integer)).(T)
-	case *big.Int:
-		m.Value = any(big.NewInt(int64(integer))).(T)
-	case *big.Float:
-		var prec uint
-		if v == nil {
-			println("passed nil as Value for Operand[*big.Float]. Using default precision of 64 bits")
-			prec = 64
-		} else {
-			prec = v.Prec()
-		}
-		m.Value = any(new(big.Float).SetPrec(prec).SetInt64(int64(integer))).(T)
-	}
-	return m
 }
 
 func (m Operand[T]) AddValue(summand T) (sum Operand[T]) {
@@ -175,69 +156,6 @@ func (m Operand[T]) Div(divisor Operand[T]) (quotient Operand[T]) {
 	return m
 }
 
-func (m Operand[T]) Zero() (zero Operand[T]) {
-	switch v := any(m.Value).(type) {
-	case int:
-		return Operand[T]{Value: any(int(0)).(T)}
-	case float64:
-		return Operand[T]{Value: any(float64(0.0)).(T)}
-	case *big.Float:
-		var prec uint
-		if v == nil {
-			println("called for zero value on nil for Operand[*big.Float]. Using default precision")
-			prec = 64
-		} else {
-			prec = v.Prec()
-		}
-		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(0)).(T)}
-	case *big.Int:
-		return Operand[T]{Value: any(big.NewInt(0)).(T)}
-	}
-	return
-}
-
-func (m Operand[T]) Identity() (identity Operand[T]) {
-	switch v := any(m.Value).(type) {
-	case int:
-		return Operand[T]{Value: any(int(1)).(T)}
-	case float64:
-		return Operand[T]{Value: any(float64(1.0)).(T)}
-	case *big.Float:
-		var prec uint
-		if v == nil {
-			println("called for identity on nil for Operand[*big.Float]. Using default precision")
-			prec = 64
-		} else {
-			prec = v.Prec()
-		}
-		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(1)).(T)}
-	case *big.Int:
-		return Operand[T]{Value: any(big.NewInt(1)).(T)}
-	}
-	return
-}
-
-func (m Operand[T]) Negation() (negation Operand[T]) {
-	switch v := any(m.Value).(type) {
-	case int:
-		return Operand[T]{Value: any(int(-1)).(T)}
-	case float64:
-		return Operand[T]{Value: any(float64(-1.0)).(T)}
-	case *big.Float:
-		var prec uint
-		if v == nil {
-			println("called for identity on nil for Operand[*big.Float]. Using default precision")
-			prec = 64
-		} else {
-			prec = v.Prec()
-		}
-		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(-1)).(T)}
-	case *big.Int:
-		return Operand[T]{Value: any(big.NewInt(-1)).(T)}
-	}
-	return
-}
-
 func (m Operand[T]) Cmp(value Operand[T]) (comparison int) {
 	switch any(m.Value).(type) {
 	case int:
@@ -264,13 +182,120 @@ func (m Operand[T]) Cmp(value Operand[T]) (comparison int) {
 	return
 }
 
-func ToFloat[T Number | BigNumber, U FloatNumber](operand Operand[T]) (Operand[U]) {
+// Constructors:
+
+// FromInt creates an Operand of the specified generic type T from an integer value.
+// The function supports types that satisfy the Number or BigNumber constraints.
+// Depending on the type of T, the integer is converted appropriately:
+//   - For int: the integer is directly assigned.
+//   - For float64: the integer is converted to a float64.
+//   - For *big.Int: the integer is converted to a *big.Int.
+//   - For *big.Float: the integer is converted to a *big.Float with a specified precision.
+//     If the Operand's Value is nil, a default precision of 64 bits is used.
+//
+// Parameters:
+//   - integer: The integer value to be converted into the Operand.
+//   - precision (optional): Specifies the precision for *big.Float. If not provided,
+//     the precision of the existing Operand's Value is used, or defaults to 64 bits.
+//
+// Returns:
+//   - operand: An Operand of type T containing the converted value.
+func FromInt[T Number | BigNumber](integer int, precision ...uint) (operand Operand[T]) {
+	operand = Operand[T]{}
+	switch any(operand.Value).(type) {
+	case int:
+		operand.Value = any(integer).(T)
+	case float64:
+		operand.Value = any(float64(integer)).(T)
+	case *big.Int:
+		operand.Value = any(big.NewInt(int64(integer))).(T)
+	case *big.Float:
+		var prec uint
+		if len(precision) > 0 {
+			prec = precision[0]
+		} else {
+			prec = 64
+		}
+		operand.Value = any(new(big.Float).SetPrec(prec).SetInt64(int64(integer))).(T)
+	}
+	return operand
+}
+func Zero[T Number | BigNumber](precision ...uint) (zero Operand[T]) {
+	zero = Operand[T]{}
+	switch any(zero.Value).(type) {
+	case int:
+		return Operand[T]{Value: any(int(0)).(T)}
+	case float64:
+		return Operand[T]{Value: any(float64(0.0)).(T)}
+	case *big.Float:
+		var prec uint
+		if len(precision) > 0 {
+			prec = precision[0]
+		} else {
+			prec = 64
+		}
+		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(0)).(T)}
+	case *big.Int:
+		return Operand[T]{Value: any(big.NewInt(0)).(T)}
+	}
+	return
+}
+
+func Identity[T Number | BigNumber](precision ...uint) (identity Operand[T]) {
+	identity = Operand[T]{}
+	switch any(identity.Value).(type) {
+	case int:
+		return Operand[T]{Value: any(int(1)).(T)}
+	case float64:
+		return Operand[T]{Value: any(float64(1.0)).(T)}
+	case *big.Float:
+		var prec uint
+		if len(precision) > 0 {
+			prec = precision[0]
+		} else {
+			prec = 64
+		}
+		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(1)).(T)}
+	case *big.Int:
+		return Operand[T]{Value: any(big.NewInt(1)).(T)}
+	}
+	return
+}
+
+func Negation[T Number | BigNumber](precision ...uint) (negation Operand[T]) {
+	negation = Operand[T]{}
+	switch any(negation.Value).(type) {
+	case int:
+		return Operand[T]{Value: any(int(-1)).(T)}
+	case float64:
+		return Operand[T]{Value: any(float64(-1.0)).(T)}
+	case *big.Float:
+		var prec uint
+		if len(precision) > 0 {
+			prec = precision[0]
+		} else {
+			prec = 64
+		}
+		return Operand[T]{Value: any(bu.PrecFloat(prec).SetInt64(-1)).(T)}
+	case *big.Int:
+		return Operand[T]{Value: any(big.NewInt(-1)).(T)}
+	}
+	return
+}
+
+func ToFloat[T Number | BigNumber, U FloatNumber](operand Operand[T], precision ...uint) Operand[U] {
 	var value U
 	switch v := any(operand.Value).(type) {
 	case int:
-		value = any(float64(v)).(U) 
+		value = any(float64(v)).(U)
 	case *big.Int:
-		value = any(new(big.Float).SetInt(v)).(U)
+		var prec uint
+		if len(precision) > 0 {
+			prec = precision[0]
+		} else {
+			prec = 64
+		}
+		value = any(new(big.Float).SetPrec(prec).SetInt(v)).(U)
 	case float64, *big.Float:
 		value = v.(U)
 	}
