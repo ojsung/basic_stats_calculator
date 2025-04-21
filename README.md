@@ -1,3 +1,6 @@
+## Time away
+Just started a new job. While I'm getting up to speed, I will probably not have time to work on this. I am hoping to start back up before June 2025. I also realized I've been doing golang duck typing/interfaces wrong so I will fix that up in the first pr when I am back
+
 # basic_stats_calculator
 A calculator with some basic statistics functions. Very basic. Written in Go so I can get some practice in with the language
 Trying to keep the structure as Clean as possible. Trying to keep it as TDD and tested as possible
