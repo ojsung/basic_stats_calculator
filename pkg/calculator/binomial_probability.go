@@ -16,9 +16,9 @@ func calculateProbabilityOfKSuccesses(chanceOfSuccess *big.Float, trials int64, 
 	if trials < successes {
 		return big.Float{}, errors.New("probability of k successes trials (n) cannot be less than successes(k)")
 	}
-	if successes == 0 {
+	// if successes == 0 {
 
-	}
+	// }
 	return
 }
 
