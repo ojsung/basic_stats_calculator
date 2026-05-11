@@ -1,8 +1,8 @@
 package calculator
+
 import (
 	"errors"
 	"math/big"
-
 )
 
 func Factorial(argument int64) (factorial *big.Int, err error) {

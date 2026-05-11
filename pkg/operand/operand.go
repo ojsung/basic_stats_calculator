@@ -264,11 +264,11 @@ func (m Operand[T]) Cmp(value Operand[T]) (comparison int) {
 	return
 }
 
-func ToFloat[T Number | BigNumber, U FloatNumber](operand Operand[T]) (Operand[U]) {
+func ToFloat[T Number | BigNumber, U FloatNumber](operand Operand[T]) Operand[U] {
 	var value U
 	switch v := any(operand.Value).(type) {
 	case int:
-		value = any(float64(v)).(U) 
+		value = any(float64(v)).(U)
 	case *big.Int:
 		value = any(new(big.Float).SetInt(v)).(U)
 	case float64, *big.Float:

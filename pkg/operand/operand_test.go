@@ -230,45 +230,45 @@ func Test_Operand_AddValue(t *testing.T) {
 
 func Test_Operand_SubValue(t *testing.T) {
 	type testCase[T Number | BigNumber] struct {
-		name        string
-		operand     Operand[T]
-		subtrahend  T
-		expected    Operand[T]
+		name       string
+		operand    Operand[T]
+		subtrahend T
+		expected   Operand[T]
 	}
 
 	intTests := []testCase[int]{
 		{
-			name:        "SubValue with int",
-			operand:     Operand[int]{Value: 10},
-			subtrahend:  3,
-			expected:    Operand[int]{Value: 7},
+			name:       "SubValue with int",
+			operand:    Operand[int]{Value: 10},
+			subtrahend: 3,
+			expected:   Operand[int]{Value: 7},
 		},
 	}
 
 	float64Tests := []testCase[float64]{
 		{
-			name:        "SubValue with float64",
-			operand:     Operand[float64]{Value: 5.5},
-			subtrahend:  2.5,
-			expected:    Operand[float64]{Value: 3.0},
+			name:       "SubValue with float64",
+			operand:    Operand[float64]{Value: 5.5},
+			subtrahend: 2.5,
+			expected:   Operand[float64]{Value: 3.0},
 		},
 	}
 
 	bigIntTests := []testCase[*big.Int]{
 		{
-			name:        "SubValue with *big.Int",
-			operand:     Operand[*big.Int]{Value: big.NewInt(50)},
-			subtrahend:  big.NewInt(20),
-			expected:    Operand[*big.Int]{Value: big.NewInt(30)},
+			name:       "SubValue with *big.Int",
+			operand:    Operand[*big.Int]{Value: big.NewInt(50)},
+			subtrahend: big.NewInt(20),
+			expected:   Operand[*big.Int]{Value: big.NewInt(30)},
 		},
 	}
 
 	bigFloatTests := []testCase[*big.Float]{
 		{
-			name:        "SubValue with *big.Float",
-			operand:     Operand[*big.Float]{Value: big.NewFloat(3.5)},
-			subtrahend:  big.NewFloat(1.5),
-			expected:    Operand[*big.Float]{Value: big.NewFloat(2.0)},
+			name:       "SubValue with *big.Float",
+			operand:    Operand[*big.Float]{Value: big.NewFloat(3.5)},
+			subtrahend: big.NewFloat(1.5),
+			expected:   Operand[*big.Float]{Value: big.NewFloat(2.0)},
 		},
 	}
 

@@ -58,7 +58,7 @@ func FloatPow(base *big.Float, exponent *big.Float) (power *big.Float, err error
 	if base.Sign() == -1 {
 		return nil, errors.New("power functions are not uniformly defined for negative bases. For negative bases with integer exponents, use IntPow")
 	}
-		
+
 	// a^n = a^n => ln(a^n) = n * ln(a) => e^ln(a^n) = e^(n * ln(a)) => a^n = e^(n * ln(a))
 	lnBase, err := Ln(base)
 	if err != nil {

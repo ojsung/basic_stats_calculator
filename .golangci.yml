@@ -1,0 +1,27 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - goimports
+    - misspell
+    - revive
+    - nilerr
+    - prealloc
+
+linters-settings:
+  revive:
+    rules:
+      # project convention: no doc comments required
+      - name: exported
+        disabled: true
+
+issues:
+  exclude-rules:
+    # test files: allow unused params, dot imports, etc.
+    - path: _test\.go
+      linters:
+        - errcheck

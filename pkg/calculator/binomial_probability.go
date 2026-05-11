@@ -3,7 +3,6 @@ package calculator
 import (
 	"errors"
 	"math/big"
-
 )
 
 func CalculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
