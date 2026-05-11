@@ -69,6 +69,9 @@ func (matrix *Matrix[T, U]) sort() {
 		if a.Row > b.Row || a.Row == b.Row && a.Column > b.Column {
 			return 1
 		}
+		if a.Row == b.Row && a.Column == b.Column {
+			return 0
+		}
 		return -1
 	})
 }
@@ -187,7 +190,6 @@ func (m *Matrix[T, U]) FractionalScalarMul(scalar U) (floatMatrix *Matrix[U, U])
 		columns: m.columns,
 		cells:   &newCells,
 	}
-	*floatMatrix.cells = newCells
 	return
 }
 
