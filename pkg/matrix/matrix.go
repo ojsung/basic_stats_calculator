@@ -35,12 +35,8 @@ type Matrix[T op.Number | op.BigNumber, U op.FloatNumber] struct {
 	columns int
 }
 
-type NumberMatrix[T op.Number] struct {
-	*Matrix[T, float64]
-}
-type BigMatrix[T op.BigNumber] struct {
-	*Matrix[T, *big.Float]
-}
+type NumberMatrix[T op.Number] = Matrix[T, float64]
+type BigMatrix[T op.BigNumber] = Matrix[T, *big.Float]
 
 func (matrix *Matrix[T, U]) reindex() {
 	columnIndex := -1
@@ -219,7 +215,7 @@ func (matrixA Matrix[T, U]) Mul(matrixB *Matrix[T, U]) (product *Matrix[T, U], e
 		for k := range matrixA.columns {
 			matrixACell := matrixACells[rowIndex*matrixA.columns+k]
 			matrixBCell := matrixBCells[matrixB.columns*k+columnIndex]
-			cell = cell.Add(matrixACell.Mul(matrixBCell))
+			cell.Operand = cell.Operand.Add(matrixACell.Operand.Mul(matrixBCell.Operand))
 		}
 		(*product.cells)[index] = cell
 	}
@@ -239,7 +235,7 @@ func (matrixA Matrix[T, U]) Add(matrixB *Matrix[T, U]) (sum *Matrix[T, U], err e
 	matrixACells := *matrixA.cells
 	matrixBCells := *matrixB.cells
 	for index, cell := range matrixACells {
-		sumCell := cell.Add(matrixBCells[index])
+		sumCell := Cell[T]{Row: cell.Row, Column: cell.Column, Operand: cell.Operand.Add(matrixBCells[index].Operand)}
 		(*sum.cells)[index] = sumCell
 	}
 	sum.reindex()
@@ -255,7 +251,7 @@ func (matrixA Matrix[T, U]) Sub(matrixB *Matrix[T, U]) (difference *Matrix[T, U]
 	matrixACells := *matrixA.cells
 	matrixBCells := *matrixB.cells
 	for index, cell := range matrixACells {
-		diffCell := cell.Sub(matrixBCells[index])
+		diffCell := Cell[T]{Row: cell.Row, Column: cell.Column, Operand: cell.Operand.Sub(matrixBCells[index].Operand)}
 		(*difference.cells)[index] = diffCell
 	}
 	difference.reindex()
@@ -569,16 +565,12 @@ func (m Matrix[T, U]) String() string {
 	return fmt.Sprintln("[\n", strings.Join(rowsAsString, "\n"), "\n]")
 }
 
-func NewNumberMatrix[T op.Number](rows [][]T) (matrix *NumberMatrix[T], err error) {
-	returnedMatrix, err := NewMatrix[T, float64](rows)
-	matrix = &NumberMatrix[T]{Matrix: returnedMatrix}
-	return
+func NewNumberMatrix[T op.Number](rows [][]T) (*NumberMatrix[T], error) {
+	return NewMatrix[T, float64](rows)
 }
 
-func NewBigMatrix[T op.BigNumber](rows [][]T) (matrix *BigMatrix[T], err error) {
-	returnedMatrix, err := NewMatrix[T, *big.Float](rows)
-	matrix = &BigMatrix[T]{Matrix: returnedMatrix}
-	return
+func NewBigMatrix[T op.BigNumber](rows [][]T) (*BigMatrix[T], error) {
+	return NewMatrix[T, *big.Float](rows)
 }
 
 func NewMatrix[T op.Number | op.BigNumber, U op.FloatNumber](rows [][]T) (matrix *Matrix[T, U], err error) {
@@ -633,7 +625,7 @@ func (m *Matrix[T, U]) perfectMatching() ([]int, bool) {
 		// Try every row for column col.
 		for row := 0; row < n; row++ {
 			entry := matrix[row][col]
-			if !used[row] && entry.Cmp(entry.Zero()) != 0 {
+			if !used[row] && entry.Operand.Cmp(entry.Operand.Zero()) != 0 {
 				used[row] = true
 				perm[col] = row
 				if dfs(col + 1) {
