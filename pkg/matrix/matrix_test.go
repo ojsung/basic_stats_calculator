@@ -16,14 +16,12 @@ func Test_sort(t *testing.T) {
 	tests := []testCase[int]{
 		{
 			name: "Sort matrix cells by row and column",
-			matrix: &NumberMatrix[int]{
-				&Matrix[int, float64]{
-					cells: &[]Cell[int]{
-						{Operand: op.NewOperand(6), Row: 1, Column: 1},
-						{Operand: op.NewOperand(4), Row: 0, Column: 1},
-						{Operand: op.NewOperand(5), Row: 1, Column: 0},
-						{Operand: op.NewOperand(3), Row: 0, Column: 0},
-					},
+			matrix: &Matrix[int, float64]{
+				cells: &[]Cell[int]{
+					{Operand: op.NewOperand(6), Row: 1, Column: 1},
+					{Operand: op.NewOperand(4), Row: 0, Column: 1},
+					{Operand: op.NewOperand(5), Row: 1, Column: 0},
+					{Operand: op.NewOperand(3), Row: 0, Column: 0},
 				},
 			},
 			expected: &[]Cell[int]{
@@ -71,16 +69,15 @@ func Test_reindex(t *testing.T) {
 	tests := []testCase[int]{
 		{
 			name: "should decrement following rows when rows are removed",
-			matrix: NumberMatrix[int]{
-				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
+			matrix: Matrix[int, float64]{
+				cells: &[]Cell[int]{
 					{Operand: op.NewOperand(1), Row: 1, Column: 0},
 					{Operand: op.NewOperand(2), Row: 1, Column: 1},
 					{Operand: op.NewOperand(3), Row: 3, Column: 0},
 					{Operand: op.NewOperand(4), Row: 3, Column: 1},
 				},
-					columns: 2,
-					rows:    4,
-				},
+				columns: 2,
+				rows:    4,
 			},
 			expectedCells: &[]Cell[int]{
 				{Operand: op.NewOperand(1), Row: 0, Column: 0},
@@ -93,17 +90,15 @@ func Test_reindex(t *testing.T) {
 		},
 		{
 			name: "should decrement following columns when columns are removed",
-			matrix: NumberMatrix[int]{
-				Matrix: &Matrix[int, float64]{
-					cells: &[]Cell[int]{
-						{Operand: op.NewOperand(1), Row: 0, Column: 1},
-						{Operand: op.NewOperand(2), Row: 0, Column: 4},
-						{Operand: op.NewOperand(3), Row: 1, Column: 1},
-						{Operand: op.NewOperand(4), Row: 1, Column: 4},
-					},
-					columns: 5,
-					rows:    2,
+			matrix: Matrix[int, float64]{
+				cells: &[]Cell[int]{
+					{Operand: op.NewOperand(1), Row: 0, Column: 1},
+					{Operand: op.NewOperand(2), Row: 0, Column: 4},
+					{Operand: op.NewOperand(3), Row: 1, Column: 1},
+					{Operand: op.NewOperand(4), Row: 1, Column: 4},
 				},
+				columns: 5,
+				rows:    2,
 			},
 			expectedCells: &[]Cell[int]{
 				{Operand: op.NewOperand(1), Row: 0, Column: 0},
@@ -116,16 +111,15 @@ func Test_reindex(t *testing.T) {
 		},
 		{
 			name: "should decrement following columns and columns when rows and columns are removed",
-			matrix: NumberMatrix[int]{
-				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
+			matrix: Matrix[int, float64]{
+				cells: &[]Cell[int]{
 					{Operand: op.NewOperand(1), Row: 2, Column: 1},
 					{Operand: op.NewOperand(2), Row: 2, Column: 4},
 					{Operand: op.NewOperand(3), Row: 5, Column: 1},
 					{Operand: op.NewOperand(4), Row: 5, Column: 4},
 				},
-					rows:    6,
-					columns: 5,
-				},
+				rows:    6,
+				columns: 5,
 			},
 			expectedCells: &[]Cell[int]{
 				{Operand: op.NewOperand(1), Row: 0, Column: 0},
@@ -163,14 +157,12 @@ func Test_Cells(t *testing.T) {
 	tests := []testCase[int]{
 		{
 			name: "Retrieve cells from matrix",
-			matrix: NumberMatrix[int]{
-				Matrix: &Matrix[int, float64]{cells: &[]Cell[int]{
-					{Operand: op.NewOperand(3), Row: 1, Column: 1},
-					{Operand: op.NewOperand(4), Row: 1, Column: 2},
-					{Operand: op.NewOperand(5), Row: 2, Column: 1},
-					{Operand: op.NewOperand(6), Row: 2, Column: 2},
-				}},
-			},
+			matrix: Matrix[int, float64]{cells: &[]Cell[int]{
+				{Operand: op.NewOperand(3), Row: 1, Column: 1},
+				{Operand: op.NewOperand(4), Row: 1, Column: 2},
+				{Operand: op.NewOperand(5), Row: 2, Column: 1},
+				{Operand: op.NewOperand(6), Row: 2, Column: 2},
+			}},
 			expected: &[]Cell[int]{
 				{Operand: op.NewOperand(3), Row: 1, Column: 1},
 				{Operand: op.NewOperand(4), Row: 1, Column: 2},
@@ -671,7 +663,7 @@ func Test_MatrixMul(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := tt.matrixA.Mul(tt.matrixB.Matrix)
+			result, err := tt.matrixA.Mul(tt.matrixB)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Matrix.Mul() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -745,7 +737,7 @@ func Test_Add(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := tt.matrixA.Add(tt.matrixB.Matrix)
+			result, err := tt.matrixA.Add(tt.matrixB)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Matrix.Add() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -841,7 +833,7 @@ func Test_Sub(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := tt.matrixA.Sub(tt.matrixB.Matrix)
+			result, err := tt.matrixA.Sub(tt.matrixB)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Matrix.Subtract() error = %v, wantErr %v", err, tt.wantErr)
 				return

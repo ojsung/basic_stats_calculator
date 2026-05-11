@@ -1,3 +1,3 @@
 package matrix
 
-// All methods for Cell are redirects for Operand, since Cell is primarily a wrapper for Operand
+// Cell embeds Operand[T] for value access. Arithmetic is handled via the promoted Operand methods.
