@@ -87,7 +87,7 @@ func (m Matrix[T, U]) RemoveRows(indices ...int) (subMatrix *Matrix[T, U], err e
 			return nil, fmt.Errorf("index out of range. len %v, index %v", matrixLength, rowIndex)
 		}
 	}
-	cells := make([]Cell[T], len(*m.cells) - len(indices) * m.columns)
+	cells := make([]Cell[T], len(*m.cells)-len(indices)*m.columns)
 	index := 0
 	for _, cell := range *m.cells {
 		if !slices.Contains(indices, cell.Row) {
@@ -110,7 +110,7 @@ func (m Matrix[T, U]) RemoveColumns(indices ...int) (subMatrix *Matrix[T, U], er
 			return nil, fmt.Errorf("index out of range. len %v, index %v", matrixLength, colIndex)
 		}
 	}
-	cells := make([]Cell[T], len(*m.cells) - len(indices) * m.rows)
+	cells := make([]Cell[T], len(*m.cells)-len(indices)*m.rows)
 	index := 0
 	for _, cell := range *m.cells {
 		if !slices.Contains(indices, cell.Column) {
@@ -118,7 +118,7 @@ func (m Matrix[T, U]) RemoveColumns(indices ...int) (subMatrix *Matrix[T, U], er
 			index++
 		}
 	}
-	subMatrix = &Matrix[T, U] {
+	subMatrix = &Matrix[T, U]{
 		cells: &cells,
 	}
 	subMatrix.reindex()
@@ -470,7 +470,7 @@ func (m Matrix[T, U]) Inverse() (inverse *Matrix[U, U], isSingular bool, err err
 	}
 	floatIdentity := op.ToFloat[T, U](identity)
 	floatDeterminant := op.ToFloat[T, U](determinant)
-	cofactorMatrix, err := m.CofactorMatrix() 
+	cofactorMatrix, err := m.CofactorMatrix()
 	if err != nil {
 		return nil, false, err
 	}
@@ -502,7 +502,7 @@ func (m Matrix[T, U]) Cofactor(rowIndex int, colIndex int) (cofactor op.Operand[
 		return op.Operand[T]{}.Zero(), errors.New("cannot find cofactor of empty matrix")
 	}
 	base := (*m.cells)[0].Operand
-	zero := base.Zero();
+	zero := base.Zero()
 	identity := base.Identity()
 	if m.rows == 1 && m.columns == 1 {
 		return identity, nil
@@ -531,20 +531,20 @@ func (m Matrix[T, U]) CofactorMatrix() (cofactorMatrix *Matrix[T, U], err error)
 		return nil, errors.New("cannot create cofactor matrix of non-square matrix")
 	}
 	cofactorCells := make([]Cell[T], lenCells)
-	for index, cell := range (mCells) {
+	for index, cell := range mCells {
 		cofactor, err := m.Cofactor(cell.Row, cell.Column)
 		if err != nil {
 			return nil, err
 		}
-		var sign op.Operand[T] 
-		if (cell.Row + cell.Column) % 2 == 0 {
+		var sign op.Operand[T]
+		if (cell.Row+cell.Column)%2 == 0 {
 			sign = mCells[0].Operand.Identity()
 		} else {
 			sign = mCells[0].Operand.FromInt(-1)
 		}
 		cofactorCells[index] = Cell[T]{
-			Row: cell.Row,
-			Column: cell.Column,
+			Row:     cell.Row,
+			Column:  cell.Column,
 			Operand: cofactor.Mul(sign),
 		}
 	}

@@ -5,6 +5,7 @@ import (
 
 	bu "github.com/ojsung/basic_stats_calculator/internal/big_utils"
 )
+
 func Test_Factorial(t *testing.T) {
 	tests := []struct {
 		name     string

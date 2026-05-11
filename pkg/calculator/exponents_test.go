@@ -305,7 +305,7 @@ func Test_determineLeastIterations(t *testing.T) {
 			got := determineLeastIterations(tt.argument)
 			// we can be a bit fuzzy here
 
-			if got < tt.want || got > int64(float64(tt.want) * 1.1 + 1) {
+			if got < tt.want || got > int64(float64(tt.want)*1.1+1) {
 				t.Errorf("determineLeastIterations() = %v, want a value greater than %v and within 10%% of it", got, tt.want)
 			}
 		})

@@ -9,7 +9,7 @@ func Contains[T comparable](haystack []T, needle T) bool {
 	return false
 }
 
-func Map[T any, U any](input[]T, mapFunction func(T) U) (output []U) {
+func Map[T any, U any](input []T, mapFunction func(T) U) (output []U) {
 	output = make([]U, len(input))
 	for index, value := range input {
 		output[index] = mapFunction(value)

@@ -3,6 +3,7 @@ package matrix
 import (
 	"reflect"
 	"testing"
+
 	op "github.com/ojsung/basic_stats_calculator/pkg/operand"
 )
 
@@ -62,7 +63,7 @@ func Test_reindex(t *testing.T) {
 	type testCase[T op.Number] struct {
 		name            string
 		matrix          NumberMatrix[T]
-		expectedCells *[]Cell[T]
+		expectedCells   *[]Cell[T]
 		expectedRows    int
 		expectedColumns int
 	}
@@ -1528,11 +1529,11 @@ func Test_GetColumn(t *testing.T) {
 
 func Test_RemoveRows(t *testing.T) {
 	type testCase[T op.Number] struct {
-		name           string
-		matrix         *NumberMatrix[T]
-		indices        []int
-		expected       *NumberMatrix[T]
-		expectedErr    bool
+		name        string
+		matrix      *NumberMatrix[T]
+		indices     []int
+		expected    *NumberMatrix[T]
+		expectedErr bool
 	}
 
 	tests := []testCase[int]{
@@ -1617,8 +1618,8 @@ func Test_RemoveRows(t *testing.T) {
 			expectedErr: true,
 		},
 		{
-			name: "Remove row from empty matrix",
-			matrix: getAssumedNoErrorMatrix(NewNumberMatrix[int]([][]int{})),
+			name:        "Remove row from empty matrix",
+			matrix:      getAssumedNoErrorMatrix(NewNumberMatrix[int]([][]int{})),
 			indices:     []int{0},
 			expected:    nil,
 			expectedErr: true,
@@ -1645,11 +1646,11 @@ func Test_RemoveRows(t *testing.T) {
 
 func Test_RemoveColumns(t *testing.T) {
 	type testCase[T op.Number] struct {
-		name           string
-		matrix         *NumberMatrix[T]
-		indices        []int
-		expected       *NumberMatrix[T]
-		expectedErr    bool
+		name        string
+		matrix      *NumberMatrix[T]
+		indices     []int
+		expected    *NumberMatrix[T]
+		expectedErr bool
 	}
 
 	tests := []testCase[int]{
@@ -1735,8 +1736,8 @@ func Test_RemoveColumns(t *testing.T) {
 			expectedErr: true,
 		},
 		{
-			name: "Remove column from empty matrix",
-			matrix: getAssumedNoErrorMatrix(NewNumberMatrix([][]int{})),
+			name:        "Remove column from empty matrix",
+			matrix:      getAssumedNoErrorMatrix(NewNumberMatrix([][]int{})),
 			indices:     []int{0},
 			expected:    nil,
 			expectedErr: true,
@@ -1957,10 +1958,10 @@ func Test_Cofactor(t *testing.T) {
 
 func Test_Inverse(t *testing.T) {
 	type testCase[T op.Number] struct {
-		name     string
-		matrix   *NumberMatrix[T]
-		expected *NumberMatrix[float64]
-		wantErr  bool
+		name       string
+		matrix     *NumberMatrix[T]
+		expected   *NumberMatrix[float64]
+		wantErr    bool
 		isSingular bool
 	}
 
@@ -1979,7 +1980,7 @@ func Test_Inverse(t *testing.T) {
 					{-0.2, 0.4},
 				},
 			)),
-			wantErr: false,
+			wantErr:    false,
 			isSingular: false,
 		},
 		{
@@ -1990,8 +1991,8 @@ func Test_Inverse(t *testing.T) {
 					{2, 4},
 				},
 			)),
-			expected: nil,
-			wantErr:  false,
+			expected:   nil,
+			wantErr:    false,
 			isSingular: true,
 		},
 		{
@@ -2006,14 +2007,14 @@ func Test_Inverse(t *testing.T) {
 					{0.2},
 				},
 			)),
-			wantErr: false,
+			wantErr:    false,
 			isSingular: false,
 		},
 		{
-			name:     "Inverse of empty matrix",
-			matrix:   getAssumedNoErrorMatrix(NewNumberMatrix[int]([][]int{})),
-			expected: nil,
-			wantErr:  true,
+			name:       "Inverse of empty matrix",
+			matrix:     getAssumedNoErrorMatrix(NewNumberMatrix[int]([][]int{})),
+			expected:   nil,
+			wantErr:    true,
 			isSingular: false,
 		},
 		{
@@ -2024,8 +2025,8 @@ func Test_Inverse(t *testing.T) {
 					{4, 5, 6},
 				},
 			)),
-			expected: nil,
-			wantErr:  true,
+			expected:   nil,
+			wantErr:    true,
 			isSingular: false,
 		},
 	}
@@ -2059,22 +2060,22 @@ func getAssumedNoErrorMatrix[T op.Number](matrix *NumberMatrix[T], err error) *N
 }
 
 func floatsEqual(a, b, epsilon float64) bool {
-    return (a-b) < epsilon && (b-a) < epsilon
+	return (a-b) < epsilon && (b-a) < epsilon
 }
 
 func floatMatricesEqual(a, b [][]float64, epsilon float64) bool {
-    if len(a) != len(b) {
-        return false
-    }
-    for i := range a {
-        if len(a[i]) != len(b[i]) {
-            return false
-        }
-        for j := range a[i] {
-            if !floatsEqual(a[i][j], b[i][j], epsilon) {
-                return false
-            }
-        }
-    }
-    return true
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if len(a[i]) != len(b[i]) {
+			return false
+		}
+		for j := range a[i] {
+			if !floatsEqual(a[i][j], b[i][j], epsilon) {
+				return false
+			}
+		}
+	}
+	return true
 }

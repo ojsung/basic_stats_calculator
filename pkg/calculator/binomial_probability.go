@@ -3,7 +3,6 @@ package calculator
 import (
 	"errors"
 	"math/big"
-
 )
 
 func CalculateBinomialProbability(chanceOfSuccess *big.Float, trials int64, successes int64) (probability big.Float, err error) {
@@ -17,9 +16,9 @@ func calculateProbabilityOfKSuccesses(chanceOfSuccess *big.Float, trials int64, 
 	if trials < successes {
 		return big.Float{}, errors.New("probability of k successes trials (n) cannot be less than successes(k)")
 	}
-	if successes == 0 {
+	// if successes == 0 {
 
-	}
+	// }
 	return
 }
 
