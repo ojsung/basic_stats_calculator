@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	bu "github.com/ojsung/basic_stats_calculator/internal/big_utils"
+	pade "github.com/ojsung/basic_stats_calculator/internal/pade"
 )
 
 var zero *big.Int = big.NewInt(0)
@@ -14,7 +15,10 @@ var one *big.Int = big.NewInt(1)
 var two *big.Int = big.NewInt(2)
 var lnCache map[string]string = make(map[string]string)
 var eCache map[uint16]string = make(map[uint16]string)
-var taylorCache map[string]string = map[string]string{"2.0000000000000000": "0.6931471805599453"}
+var taylorCache map[string]string = make(map[string]string)
+
+const padeEdgeLow = "0.2"
+const padeEdgeHigh = "1.8"
 
 func IntPow(base *big.Float, exponent *big.Int) (power *big.Float) {
 	composition := bu.BinaryExp{
@@ -109,6 +113,14 @@ func Ln(argument *big.Float) (logarithm *big.Float, err error) {
 		return nil, errors.New("argument of natural log must be a positive, real number")
 	}
 	if argument.Cmp(bu.StrToFloat("2")) <= 0 {
+		if argument.Cmp(bu.StrToFloat(padeEdgeLow)) <= 0 || argument.Cmp(bu.StrToFloat(padeEdgeHigh)) > 0 {
+			logarithm, err = pade.ApproximateLn(argument)
+			if err != nil {
+				return nil, err
+			}
+			lnCache[bu.ToStr(argument)] = bu.ToStr(logarithm)
+			return
+		}
 		return taylorApproximationLn(argument)
 	} else {
 		mantissa := bu.PrecFloat()
@@ -172,8 +184,8 @@ func taylorApproximationLn(argument *big.Float, maxIterations ...int64) (logarit
 	if zero := bu.PrecFloat().SetInt64(0); argument.Cmp(zero) == 0 {
 		return nil, errors.New("log is undefined at zero")
 	}
-	if two := bu.PrecFloat().SetInt64(2); argument.Cmp(two) == 1 {
-		return nil, errors.New("taylor approximation of natural log diverges for values greater than 2")
+	if two := bu.PrecFloat().SetInt64(2); argument.Cmp(two) >= 0 {
+		return nil, errors.New("taylor approximation of natural log diverges for values of 2 or greater")
 	}
 	if value, ok := taylorCache[bu.ToStr(argument)]; ok {
 		return bu.StrToFloat(value), nil

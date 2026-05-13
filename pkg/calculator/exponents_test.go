@@ -195,6 +195,24 @@ func Test_Ln(t *testing.T) {
 			want:     "-0.6931471805599453",
 			wantErr:  false,
 		},
+		{
+			name:     "It should return -2.3025850929940457 for ln(0.1)",
+			argument: bu.StrToFloat("0.1"),
+			want:     "-2.3025850929940457",
+			wantErr:  false,
+		},
+		{
+			name:     "It should return -2.9957322735539910 for ln(0.05)",
+			argument: bu.StrToFloat("0.05"),
+			want:     "-2.9957322735539910",
+			wantErr:  false,
+		},
+		{
+			name:     "It should return 0.6418538861723948 for ln(1.9)",
+			argument: bu.StrToFloat("1.9"),
+			want:     "0.6418538861723948",
+			wantErr:  false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -228,15 +246,14 @@ func Test_taylorApproximationLn(t *testing.T) {
 			wantErr:  true,
 		},
 		{
-			name:     "It should error for real numbers greater than 1",
+			name:     "It should error for real numbers greater than or equal to 2",
 			argument: bu.PrecFloat().SetInt64(4),
 			wantErr:  true,
 		},
 		{
-			name:     "It should return 0.6931471805599453 for ln(2)",
+			name:     "It should error for argument equal to 2",
 			argument: bu.PrecFloat().SetInt64(2),
-			want:     "0.6931471805599453",
-			wantErr:  false,
+			wantErr:  true,
 		},
 		{
 			name:     "It should return -0.6931471805599453 for ln(0.5)",
@@ -290,9 +307,9 @@ func Test_determineLeastIterations(t *testing.T) {
 			want:     92,
 		},
 		{
-			name:     "It should return 200 for argument 0.85",
+			name:     "It should return 223 for argument 0.85",
 			argument: bu.StrToFloat("0.85"),
-			want:     200,
+			want:     223,
 		},
 		{
 			name:     "It should return 327 for argument 0.9",
