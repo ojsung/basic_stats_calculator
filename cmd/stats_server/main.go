@@ -1,7 +1,10 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"html/template"
+	"io/fs"
 	"math/big"
 	"net/http"
 	"os"
@@ -11,78 +14,63 @@ import (
 	"github.com/ojsung/basic_stats_calculator/pkg/calculator"
 )
 
-const formHTML = `<!DOCTYPE html>
-<html>
-<head><title>Binomial Probability Calculator</title></head>
-<body>
-<h1>Binomial Probability Calculator</h1>
-%s
-<form method="POST" action="/calculate">
-  <label>p (chance of success, 0-1):<br><input type="text" name="p"></label><br><br>
-  <label>n (number of trials):<br><input type="text" name="n"></label><br><br>
-  <label>k (number of successes):<br><input type="text" name="k"></label><br><br>
-  <input type="submit" value="Calculate">
-</form>
-</body>
-</html>`
+//go:embed templates/*.html
+var templateFS embed.FS
 
-const resultHTML = `<!DOCTYPE html>
-<html>
-<head><title>Result</title></head>
-<body>
-<h1>Result</h1>
-<p>P(X = %s) with p=%s, n=%s: <strong>%s</strong> (%s%%)</p>
-<a href="/">Calculate again</a>
-</body>
-</html>`
+//go:embed static
+var staticFS embed.FS
 
-const calcErrorHTML = `<!DOCTYPE html>
-<html>
-<head><title>Error</title></head>
-<body>
-<h1>Error</h1>
-<p>%s</p>
-<a href="/">Try again</a>
-</body>
-</html>`
+var formTmpl = template.Must(template.ParseFS(templateFS, "templates/form.html"))
+
+type formData struct {
+	P, N, K string
+	Error   string
+	Result  string
+	Pct     string
+}
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Fprintf(w, formHTML, "")
+	formTmpl.Execute(w, formData{}) //nolint:errcheck
 }
 
 func calculateHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, formHTML, "<p>Could not parse form.</p>")
+		formTmpl.Execute(w, formData{Error: "Could not parse form."}) //nolint:errcheck
 		return
 	}
-	p, ok := new(big.Float).SetString(r.FormValue("p"))
+	d := formData{P: r.FormValue("p"), N: r.FormValue("n"), K: r.FormValue("k")}
+	p, ok := new(big.Float).SetString(d.P)
 	if !ok {
-		fmt.Fprintf(w, formHTML, "<p>Invalid value for p — must be a decimal number between 0 and 1.</p>")
+		d.Error = "Invalid value for p — must be a decimal number between 0 and 1."
+		formTmpl.Execute(w, d) //nolint:errcheck
 		return
 	}
-	n, err := strconv.ParseInt(r.FormValue("n"), 10, 64)
+	n, err := strconv.ParseInt(d.N, 10, 64)
 	if err != nil {
-		fmt.Fprintf(w, formHTML, "<p>Invalid value for n — must be a whole number.</p>")
+		d.Error = "Invalid value for n — must be a whole number."
+		formTmpl.Execute(w, d) //nolint:errcheck
 		return
 	}
-	k, err := strconv.ParseInt(r.FormValue("k"), 10, 64)
+	k, err := strconv.ParseInt(d.K, 10, 64)
 	if err != nil {
-		fmt.Fprintf(w, formHTML, "<p>Invalid value for k — must be a whole number.</p>")
+		d.Error = "Invalid value for k — must be a whole number."
+		formTmpl.Execute(w, d) //nolint:errcheck
 		return
 	}
 	result, calcErr := calculator.CalculateBinomialProbability(p, n, k)
 	if calcErr != nil {
-		fmt.Fprintf(w, calcErrorHTML, calcErr.Error())
+		d.Error = calcErr.Error()
+		formTmpl.Execute(w, d) //nolint:errcheck
 		return
 	}
-	resultStr := bu.ToStr(&result, 10)
 	pctFloat := new(big.Float).Mul(&result, big.NewFloat(100))
-	pctStr := bu.ToStr(pctFloat, 4)
-	fmt.Fprintf(w, resultHTML, r.FormValue("k"), r.FormValue("p"), r.FormValue("n"), resultStr, pctStr)
+	d.Result = bu.ToStr(&result, 10)
+	d.Pct = bu.ToStr(pctFloat, 4)
+	formTmpl.Execute(w, d) //nolint:errcheck
 }
 
 func main() {
@@ -90,6 +78,11 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	staticSub, err := fs.Sub(staticFS, "static")
+	if err != nil {
+		panic(err)
+	}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticSub))))
 	http.HandleFunc("/", formHandler)
 	http.HandleFunc("/calculate", calculateHandler)
 	fmt.Printf("Listening on :%s\n", port)
