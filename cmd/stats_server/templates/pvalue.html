@@ -1,0 +1,31 @@
+{{define "content"}}
+  <div class="card">
+    <h1>Binomial P-Value</h1>
+    {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+    <form method="POST" action="/pvalue/calculate">
+      <label for="p">p (chance of success, 0–1)</label>
+      <input type="text" id="p" name="p" value="{{.P}}">
+      <label for="n">n (number of trials)</label>
+      <input type="text" id="n" name="n" value="{{.N}}">
+      <label for="k">k (observed successes)</label>
+      <input type="text" id="k" name="k" value="{{.K}}">
+      <fieldset>
+        <legend>Tail</legend>
+        <label><input type="radio" name="tail" value="left"{{if eq .Tail "left"}} checked{{end}}> Left — P(X ≤ k)</label>
+        <label><input type="radio" name="tail" value="right"{{if eq .Tail "right"}} checked{{end}}> Right — P(X ≥ k)</label>
+        <label><input type="radio" name="tail" value="two"{{if or (eq .Tail "two") (eq .Tail "")}} checked{{end}}> Two-tailed</label>
+      </fieldset>
+      <input type="submit" value="Calculate">
+    </form>
+  </div>
+  {{if .PValue}}
+  <div class="card">
+    <div class="result-label">
+      {{if eq .Tail "left"}}P(X ≤ {{.K}}){{else if eq .Tail "right"}}P(X ≥ {{.K}}){{else}}Two-tailed, k = {{.K}}{{end}}
+      with p = {{.P}}, n = {{.N}}
+    </div>
+    <div class="result-value">{{.PValue}}</div>
+    <div class="result-pct">{{.PValuePct}}%</div>
+  </div>
+  {{end}}
+{{end}}

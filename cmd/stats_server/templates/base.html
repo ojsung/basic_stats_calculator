@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats Calculator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="tabs">
+      <a href="/" class="tab{{if eq .ActiveTab "binomial"}} active{{end}}">Binomial P(X=k)</a>
+      <a href="/cdf" class="tab{{if eq .ActiveTab "cdf"}} active{{end}}">Cumulative CDF</a>
+      <a href="/pvalue" class="tab{{if eq .ActiveTab "pvalue"}} active{{end}}">P-Value</a>
+    </nav>
+    {{block "content" .}}{{end}}
+  </div>
+</body>
+</html>

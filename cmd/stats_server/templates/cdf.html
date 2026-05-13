@@ -1,0 +1,36 @@
+{{define "content"}}
+  <div class="card">
+    <h1>Cumulative Distribution (CDF)</h1>
+    {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+    <form method="POST" action="/cdf/calculate">
+      <label for="p">p (chance of success, 0–1)</label>
+      <input type="text" id="p" name="p" value="{{.P}}">
+      <label for="n">n (number of trials)</label>
+      <input type="text" id="n" name="n" value="{{.N}}">
+      <label for="k">k (cumulate up to k successes)</label>
+      <input type="text" id="k" name="k" value="{{.K}}">
+      <input type="submit" value="Calculate">
+    </form>
+  </div>
+  {{if .Cumulative}}
+  <div class="card">
+    <div class="result-label">P(X ≤ {{.K}}) with p = {{.P}}, n = {{.N}}</div>
+    <div class="result-value">{{.Cumulative}}</div>
+    <div class="result-pct">{{.CumulativePct}}%</div>
+    <table class="distribution-table">
+      <thead>
+        <tr><th>k</th><th>P(X=k)</th><th>Cumulative</th></tr>
+      </thead>
+      <tbody>
+        {{range .Terms}}
+        <tr>
+          <td>{{.K}}</td>
+          <td>{{.Probability}}</td>
+          <td>{{.Cumulative}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{end}}
+{{end}}

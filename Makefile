@@ -8,3 +8,6 @@ lint-fix:
 
 test-unit:
 	go test ./...
+
+run:
+	go run ./cmd/stats_server/
