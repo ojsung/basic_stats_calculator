@@ -110,3 +110,87 @@ input[type="submit"]:hover {
   font-size: 13px;
   color: #7d7490;
 }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #7d7490;
+  text-decoration: none;
+  background: #1d1b22;
+  border: 1px solid #2e2a38;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.tab:hover {
+  color: #c4a8f8;
+}
+
+.tab.active {
+  color: #c4a8f8;
+  background: #2a2535;
+  border-color: #7c5cbf;
+}
+
+.distribution-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+.distribution-table th,
+.distribution-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #2e2a38;
+  color: #7d7490;
+}
+
+.distribution-table th {
+  font-weight: 600;
+  color: #9d90b0;
+}
+
+.distribution-table td:first-child {
+  color: #ccc4e0;
+}
+
+fieldset {
+  border: 1px solid #2e2a38;
+  border-radius: 7px;
+  padding: 10px 13px;
+  margin-bottom: 14px;
+}
+
+legend {
+  font-size: 12px;
+  color: #7d7490;
+  padding: 0 4px;
+}
+
+fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #ccc4e0;
+}
+
+fieldset label:last-child {
+  margin-bottom: 0;
+}
+
+input[type="radio"] {
+  accent-color: #7c5cbf;
+}
