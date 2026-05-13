@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binomial Probability Calculator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Binomial Probability Calculator</h1>
+      {{if .Error}}<div class="error">{{.Error}}</div>{{end}}
+      <form method="POST" action="/calculate">
+        <label for="p">p (chance of success, 0–1)</label>
+        <input type="text" id="p" name="p" value="{{.P}}">
+        <label for="n">n (number of trials)</label>
+        <input type="text" id="n" name="n" value="{{.N}}">
+        <label for="k">k (number of successes)</label>
+        <input type="text" id="k" name="k" value="{{.K}}">
+        <input type="submit" value="Calculate">
+      </form>
+    </div>
+    {{if .Result}}
+    <div class="card">
+      <div class="result-label">P(X = {{.K}}) with p = {{.P}}, n = {{.N}}</div>
+      <div class="result-value">{{.Result}}</div>
+      <div class="result-pct">{{.Pct}}%</div>
+    </div>
+    {{end}}
+  </div>
+</body>
+</html>
